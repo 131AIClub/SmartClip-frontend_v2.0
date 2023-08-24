@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Page</title>
+</head>
+<body>
+  <div id="paymentForm">
+    <!-- 表单将会在这里填充 -->
+  </div>
+
+  <script>
+    function insertAndSubmitForm(htmlContent) {
+        // 使用DOMParser将字符串转化为DOM元素
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlContent, 'text/html');
+
+        // 获取表单
+        const form = doc.querySelector('form');
+        // 将表单插入到页面中
+        document.getElementById('paymentForm').appendChild(form);
+
+        // 提交表单
+        form.submit();
+    }
+
+    window.addEventListener('message', async (event) => {
+        const amount = event.data;
+
+        // 发送POST请求到后端
+        const response = await fetch('https://api-clip-v1.seutools.com/credit/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: localStorage.getItem("token")
+            },
+            body: JSON.stringify({ amount }) // 发送amount数据到后端
+        });
+
+        // 等待响应，并将结果解析为JSON格式
+        const res = await response.json();
+
+        if(res.code === 200) {
+            // 获取form表单内容
+            const formHtml = res.data.form;
+
+            // 插入并提交表单
+            insertAndSubmitForm(formHtml);
+
+            window.opener.postMessage(res.data.orderId, '*');
+        } else {
+            alert(res.msg);
+        }
+    });
+  </script>
+</body>
+</html>
