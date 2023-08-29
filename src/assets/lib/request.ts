@@ -51,7 +51,7 @@ class Client {
   async image(video_id: number): Promise<string> {
     return (await this.get<{ previewImageUrl: string }>(
         {url: `video/${video_id}/preview/`})
-    // ).data.video_url.replace("http://18.222.134.182:6324", api_url)
+    // ).data.previewImageUrl.replace("http://18.222.134.182:6324", api_url)
     ).data.previewImageUrl.replace("http://18.222.134.182:6666", api_url)//测试用的
   }
 }

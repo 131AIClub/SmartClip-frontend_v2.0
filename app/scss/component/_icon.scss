@@ -1,0 +1,42 @@
+@use '../abstracts/' as *;
+
+.section-icon {
+    padding: 59px 0;
+
+    .list-icon {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -15px;
+
+        @include desktop-1650 {
+            justify-content: center;
+        }
+    
+        .icon {
+            min-width: 210px;
+            width: 210px;
+            height: 210px;
+            background: #050231;
+            border-radius: 16px;
+            margin: 0 15px 30px;
+
+            @include flex(center,center);
+            flex-direction: column;
+            span {
+                font-size: 50px;
+
+                &::before {
+                    color: #fff;
+                }
+            }
+
+            .name {
+                margin-top: 26px;
+                font-size: 16px;
+                font-weight: 700;
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+

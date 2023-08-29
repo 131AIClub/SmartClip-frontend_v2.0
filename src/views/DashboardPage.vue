@@ -1,4 +1,4 @@
-<!-- 这是？？？的.vue文件 -->
+<!-- 这是侧边栏的.vue文件 -->
 <template>
   <div class="flex justify-between items-start">
     <dashboard-sider-bar class="fixed md:sticky top-12 md:top-16 shadow-around z-10"/>

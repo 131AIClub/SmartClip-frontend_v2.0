@@ -6,22 +6,24 @@ type StoreType = {
   dark: boolean
   initialized: boolean
   is_mobile: boolean
-  show_sign_modal: boolean
+  show_sign_page: boolean
   is_login: boolean
   user: User | null
   loading: boolean
   order_id: string
+  video_URL: string
 }
 export const UseStore = defineStore("main", {
   state: (): StoreType => ({
-    dark: false,
+    dark: true,//默认主题为黑色
     initialized: false,
     is_mobile: window.innerWidth < 768,
-    show_sign_modal: false,
+    show_sign_page: false,//要修改
     is_login: false,
     user: null,
     loading: false,
-    order_id: ""
+    order_id: "",
+    video_URL: ""
   }),
   getters: {},
   actions: {

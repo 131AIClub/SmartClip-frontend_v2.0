@@ -1,0 +1,92 @@
+@use '../abstracts/' as *;
+
+
+.list-icon-box {
+    margin-top: 41px;
+    padding-right: 132px;
+    position: relative;
+
+    &::before {
+        @include absolute;
+        z-index: 0;
+        left: 24px;
+        width: 2px;
+        height: 80%;
+        border-left: 2px dashed rgba(67, 136, 221, 1);
+    }
+}
+
+.icon-box {
+    display: flex;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
+
+    .icon {
+        @include flex(center,center);
+        min-width: 48px;
+        height: 48px;
+        background: linear-gradient(294.72deg, $gradient-color2 9.05%, $gradient-color1 79.28%);
+        border-radius: 50%;
+        margin-right: 17px;
+    }
+    .content {
+        padding-top: 2px;
+        p {
+            line-height: 1.6;
+        }
+    }
+}
+.choose__box {
+    margin-top: 35px
+}
+.choose__box-icon {
+    @include flex(center, center);
+    flex-direction: column;
+    cursor: pointer;
+    
+    .icon {
+        min-width: 66px;
+        width: 66px;
+        height: 66px;
+        border-radius: 50%;
+        background: linear-gradient(294.72deg, $gradient-color2 9.05%, $gradient-color1 79.28%);
+        @include flex(center,center);
+        position: relative;
+        transition: 0.7s all ease-in-out;
+
+        margin-bottom: 47px;
+        span {
+            font-size: 26px;
+        }
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border:3px solid rgba(255,255,255,0.2);
+            margin: -12px;
+            transition: 0.3s all ease-in-out;
+        }
+
+        
+    }
+    .content {
+        h5 {
+            margin-bottom: 18px;
+        }
+    }
+    &:hover {
+        .icon {
+            &::before {
+                border-color: $gradient-color1;
+            }
+
+            transform: rotateY(-360deg);
+        }
+        
+    }
+}

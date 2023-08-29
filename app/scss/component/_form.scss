@@ -1,0 +1,48 @@
+@use '../abstracts/' as *;
+
+
+form {
+    margin-top: 12px;
+    position: relative;
+    input , textarea {
+        padding: 9px 18px;
+        background: rgba(255, 255, 255, 0.04);
+        width: 100%;
+        border: 1px solid transparent;
+        box-shadow: none;
+        border-radius: 8px;
+        color: #fff;
+
+        margin-bottom: 24px;
+
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        
+
+        &:focus-visible {
+            border: 1px solid var(--primary-color) !important;
+            box-shadow: none;
+            outline: none;
+        }
+
+    }
+    ::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+        letter-spacing: -0.4px;
+        font-weight: 400;
+    }
+
+    textarea {
+        height: 120px;
+        width: 100%;
+    }
+
+    button.btn-action {
+        margin-top: 6px;
+        padding: 10px 39px;
+        color: #fff;
+    }
+
+    @include mobile {
+        width: 100%;
+    }
+}

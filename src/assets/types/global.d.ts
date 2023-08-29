@@ -17,7 +17,7 @@ declare global {
     // clipNum: number
     // otherRequirement: string
     maxClipNum: number
-    templateId: number
+    // templateId: number
   }
 
   type Task = {
@@ -26,8 +26,12 @@ declare global {
     taskCreateTime: number
     clipRequirement: ClipRequirement
     videoId: number
-    errorStage: number
+    // errorStage: number
     errorMessage: string
+    taskRemark: string
+    videoSourceInfo: VideoSourceInfo
+    videoImageUrl: string
+    
   }
 
   type Clip = {
@@ -100,5 +104,18 @@ declare global {
     remark: string,
     source: number,
     videoPreview: string
+  }
+
+  type VideoSourceInfo = {
+    source: number,
+    downloadUrl: string,
+    liveRoomRecordTask: LiveRoomRecordTask,
+  }
+
+  type LiveRoomRecordTask = {
+    platform: number,
+    liveRoomId: string,
+    recordStartTime: string,
+    recordEndTime: string
   }
 }

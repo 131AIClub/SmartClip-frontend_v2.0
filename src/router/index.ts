@@ -11,16 +11,24 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    //登录窗口的router
+    path:"/log-in",
+    component:() => import("@/components/dashboard/account_information/LogIn.vue"),
+    meta:{
+      depth: 0
+    }
+  },
+  {
     path: "/dashboard",
     component: () => import("@/views/DashboardPage.vue"),
     children: [
-      {
-        path: "",
-        redirect: "/dashboard/profile"
-      },
+      // {
+      //   path: "",
+      //   redirect: "/dashboard/profile"
+      // },
       {//菜单栏：账号信息
         path: "profile",
-        component: () => import("@/components/dashboard/UserProfile.vue"),
+        component: () => import("@/components/dashboard/account_information/UserProfile.vue"),
         meta: {
           auth: true,//要求登录才能访问
           depth: 1,//页面深度
@@ -30,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: "payment",
-        component: () => import("@/components/dashboard/PayMoney.vue"),
+        component: () => import("@/components/dashboard/payment/PayMoney.vue"),
         meta: {
           auth: true,
           depth: 1,
@@ -40,7 +48,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: "payment-result",
-        component: () => import("@/components/dashboard/PayResult.vue"),
+        component: () => import("@/components/dashboard/payment/PayMoney.vue"),
         meta: {
           auth: true,
           depth: 1,
@@ -50,7 +58,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {//菜单栏：创建任务
         path: "choose-task",
-        component: () => import("@/components/dashboard/ChooseTask.vue"),
+        component: () => import("@/components/dashboard/create_task/ChooseTask.vue"),
         meta: {
           auth: true,
           depth:1,
@@ -60,7 +68,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: "create-task",
-        component: () => import("@/components/dashboard/CreateTask.vue"),
+        component: () => import("@/components/dashboard/create_task/CreateTask.vue"),
         meta: {
           auth: true,
           depth: 1,
@@ -70,7 +78,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: "create-task/:task_id",
-        component: () => import("@/components/dashboard/CreateTask.vue"),
+        component: () => import("@/components/dashboard/create_task/CreateTask.vue"),
         meta: {
           auth: true,
           depth: 1,
@@ -80,7 +88,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path:"create-task-live",
-        component: () => import("@/components/dashboard/CreateTaskLive.vue"),
+        component: () => import("@/components/dashboard/create_task/CreateTaskLive.vue"),
         meta: {
           auth:true,
           depth:2,
@@ -90,7 +98,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {//全部任务
         path: "task",
-        component: () => import("@/components/dashboard/AllTask.vue"),
+        component: () => import("@/components/dashboard/all_task/AllTask.vue"),
         meta: {
           auth: true,
           depth: 1,
@@ -100,7 +108,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: "task/:task_id",
-        component: () => import("@/components/dashboard/TaskDetail.vue"),
+        component: () => import("@/components/dashboard/task_detail/TaskDetail.vue"),
         meta: {
           auth: true,
           depth: 1,
@@ -110,7 +118,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: "task-live",
-        component: () => import("@/components/dashboard/AllTaskLive.vue"),
+        component: () => import("@/components/dashboard/all_task/AllTaskLive.vue"),
         meta: {
           auth: true,
           depth: 1,
@@ -120,7 +128,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path:"task-live/:task_id",
-        component: () => import("@/components/dashboard/TaskDetailLive.vue"),
+        component: () => import("@/components/dashboard/task_detail/TaskDetailLive.vue"),
         meta:{
           auth: true,
           depth: 1,
@@ -129,13 +137,13 @@ const routes: Array<RouteRecordRaw> = [
         }
       },
       {//视频资源库
-        path:"video-resource",
-        component: () => import("@/components/dashboard/VideoResource.vue"),
+        path:"task-center",
+        component: () => import("@/components/dashboard/task_center/TaskCenter.vue"),
         meta: {
           auth:true,
           depth:1,
           dashboard_menu: "3",
-          dashboard_breadcrumb: ["视频资源库"]
+          dashboard_breadcrumb: ["任务中心"]
         }
       }
     ]
@@ -147,6 +155,7 @@ const router = createRouter({
   routes
 })
 
+//没有登录就进行重定向
 router.beforeEach((to, from, next) => {
   const store = UseStore()
   if (!store.initialized) {
@@ -154,7 +163,8 @@ router.beforeEach((to, from, next) => {
       if (store.initialized) {
         if (to.meta.auth && !store.is_login) {
           next(`/?next=${to.path}`)
-          store.show_sign_modal = true
+          // router.push('/log-in')
+          store.show_sign_page = true
         } else {
           next()
         }
@@ -164,7 +174,8 @@ router.beforeEach((to, from, next) => {
   } else {
     if (to.meta.auth && !store.is_login) {
       next(`/?next=${to.path}`)
-      store.show_sign_modal = true
+      // router.push('/log-in')
+      store.show_sign_page = true
       return
     }
     next()

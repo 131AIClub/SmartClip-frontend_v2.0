@@ -15,8 +15,11 @@
       </div>
 
       <div class="flex justify-end items-center gap-3">
+
+        <!-- 任务中心 -->
+        <a-button  @click="toTaskCenter"  size="large">任务中心</a-button>
         <!-- 充值按钮 -->
-        <a-button @click="router.push('/dashboard/payment')">充值</a-button>
+        <a-button @click="toPayment" size="large">充值</a-button>
         <!-- 改变主题：黑/白 -->
         <a-button size="large" type="text" shape="circle" @click="store.toggleTheme()">
           <i-ph-sun-bold v-if="!store.dark" />
@@ -28,6 +31,8 @@
           <img alt="avatar"
             src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp" />
         </a-avatar>
+
+        <a-button  @click="router.push('/log-in')"  size="large">登录</a-button>
       </div>
 
     </div>
@@ -37,6 +42,7 @@
 <script setup lang="ts">
 import { UseStore } from "@/store";
 import { useRouter } from "vue-router";
+import { ElMessage } from 'element-plus'
 
 const store = UseStore()
 const router = useRouter()
@@ -46,6 +52,36 @@ const toHomePage = () => {
   router.push('/')
   if (store.$state.dark === false)
     store.toggleTheme()
+}
+
+//前往任务中心
+const toTaskCenter = () => {
+  if(!store.$state.is_login)
+  {
+    ElMessage({
+      type: "error",
+      message: "请先登录！",
+      center: true
+    })
+    return
+  }
+
+  router.push('/dashboard/task-center')
+}
+
+//点击充值按钮触发事件
+const toPayment = () => {
+  if(!store.$state.is_login)
+  {
+    ElMessage({
+      type: "error",
+      message: "请先登录！",
+      center: true
+    })
+    return
+  }
+
+  router.push('/dashboard/payment')
 }
 
 </script>

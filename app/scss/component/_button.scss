@@ -1,0 +1,422 @@
+@use '../abstracts/' as *;
+
+
+.section-button {
+    padding: 57px 0;
+
+    .list-button {
+        @include flex(center,space-between);
+    }
+}
+
+.section-button.s1 {
+    padding: 54px 0 60px;
+    margin-bottom: 80px;
+}
+
+.btn-action {
+    padding: 17px 10px 15px 25px;
+
+    position: relative;
+    overflow: hidden;
+    font-weight: 700;
+    background: linear-gradient(294.72deg, #FF4581 9.05%, #4388DD 79.28%);
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    max-width: 326px;
+    
+    font-size: 16px;
+    
+    span {
+        position: relative;
+        z-index: 2;
+    }
+    span.icon-arrow {
+        width: 32px;
+        min-width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #fff;
+        margin-left: 20px;
+        @include flex(center,center);
+
+        &:before {
+            font-size: 15px;
+            font-weight: 900;
+            background: linear-gradient(294.72deg, #FF4581 9.05%, #4388DD 79.28%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transform: rotate(-90deg);
+        }
+    }
+    &::after {
+        @include absolute;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        transition: 0.5s all ease-in-out;
+        background: linear-gradient(-294.72deg, #FF4581 9.05%, #4388DD 79.28%);
+        opacity: 0;
+        transition: 0.5s all ease-in-out;
+    }
+
+    &:hover {
+        color: $white;
+    }
+    &:hover::after {
+        opacity: 1;
+    }
+}
+.btn-action.style-1 {
+    padding: 17px 15px 15px 24px;
+}
+
+
+.btn-action.style-2 {
+    padding: 14px 41px;
+
+    border-radius: 12px;
+
+    position: relative;
+    overflow: hidden;
+
+    font-family: 'Zen Dots';
+    font-weight: 400;
+    background: linear-gradient(90deg, #F54097 0%, #EF369B 7.69%, #E92C9F 15.38%, #E122A4 23.08%, #D918A9 30.77%, #D00DAE 38.46%, #C603B3 46.15%, #BA00B9 53.85%, #AD01BE 61.54%, #9F07C4 69.23%, #8E10C9 76.92%, #7A18CF 84.62%, #6220D4 92.31%, #3F26D9 100%), linear-gradient(87.21deg, #F54097 0%, #3F26D9 100%);
+    span {
+        position: relative;
+        z-index: 2;
+    }
+    
+    &::after {
+        @include absolute;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        transition: 0.5s all ease-in-out;
+        background: linear-gradient(-90deg, #F54097 0%, #EF369B 7.69%, #E92C9F 15.38%, #E122A4 23.08%, #D918A9 30.77%, #D00DAE 38.46%, #C603B3 46.15%, #BA00B9 53.85%, #AD01BE 61.54%, #9F07C4 69.23%, #8E10C9 76.92%, #7A18CF 84.62%, #6220D4 92.31%, #3F26D9 100%), linear-gradient(87.21deg, #F54097 0%, #3F26D9 100%);
+        opacity: 0;
+        transition: 0.5s all ease-in-out;
+    }
+
+    &:hover {
+        color: $white;
+    }
+    &:hover::after {
+        opacity: 1;
+    }
+}
+
+.btn-action.style-3 {
+    padding: 16px 40px;
+    font-family: 'Russo One';
+    font-weight: 400;
+    background: linear-gradient(90deg, #3DBFBB 0%, #8635BD 100%);
+    border-radius: 0;
+    letter-spacing: 3px;
+
+    &::after {
+        @include absolute;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        transition: 0.5s all ease-in-out;
+        background: linear-gradient(90deg, #8635BD 0%, #3DBFBB 100%);
+        opacity: 0;
+        transition: 0.5s all ease-in-out;
+    }
+
+    &:hover::after {
+        opacity: 1;
+    }
+}
+
+.btn-action.style-4 {
+    padding: 14px 32px;
+    font-family: 'Inter';
+    font-weight: 700;
+    background: linear-gradient(153.06deg, #13B8BA -0.31%, #6A0A6B 99.69%);
+    border-radius: 12px;
+
+    &::after {
+        @include absolute;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        transition: 0.5s all ease-in-out;
+        background: linear-gradient(153.06deg, #6A0A6B -0.31%, #13B8BA 99.69%);
+        opacity: 0;
+        transition: 0.5s all ease-in-out;
+    }
+
+    &:hover::after {
+        opacity: 1;
+    }
+}
+.btn-action.style-5 {
+    background: linear-gradient(107.45deg, #23E4A1 10.53%, #2B52DB 58.9%, #2724CA 70.82%);
+    border-radius: 57px;
+    padding: 14px 40px;
+    position: relative;
+
+    &::after {
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.13) 0px, rgba(255, 255, 255, 0.13) 77%, rgba(255, 255, 255, 0.5) 92%, rgba(255, 255, 255, 0));
+        content: "";
+        height: 200%;
+        left: -210%;
+        opacity: 0;
+        position: absolute;
+        top: -50%;
+        transition: all 0.7s ease 0s;
+        width: 200%;
+    }
+
+    &:hover::after {
+        left: -30%;
+        opacity: 1;
+        top: -20%;
+        transition-duration: 0.7s, 0.7s, 0.15s;
+        transition-property: left, top, opacity;
+        transition-timing-function: linear;
+    }
+}
+.btn-action.style-6 {
+    background: linear-gradient(153.06deg, #B621FE -0.31%, #1FD1F9 99.69%);
+    border-radius: 57px;
+    padding: 14px 40px;
+    position: relative;
+    display: inline-block;
+
+    &::after {
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.13) 0px, rgba(255, 255, 255, 0.13) 77%, rgba(255, 255, 255, 0.5) 92%, rgba(255, 255, 255, 0));
+        content: "";
+        height: 200%;
+        left: -210%;
+        opacity: 0;
+        position: absolute;
+        top: -50%;
+        transition: all 0.7s ease 0s;
+        width: 200%;
+    }
+
+    &:hover::after {
+        left: -30%;
+        opacity: 1;
+        top: -20%;
+        transition-duration: 0.7s, 0.7s, 0.15s;
+        transition-property: left, top, opacity;
+        transition-timing-function: linear;
+    }
+}
+
+
+.btn-action-outline {
+    position: relative;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    font-size: 16px;
+    font-weight: 700;
+    overflow: hidden;
+
+    &::before {
+        @include absolute;
+        z-index: 0;
+        width: 0;
+        height: 100%;
+        transition: 0.3s all ease-in-out;
+    }
+    span {
+        position: relative;
+        z-index: 1;
+    }
+
+    &:hover {
+        color: #fff;
+        &::before {
+            width: 100%;
+        }
+    }
+}
+.btn-action-outline.style-1 {
+    border-color: #C004DE;
+    border-radius: 12px;
+    padding: 11px 33px;
+
+    &::before {
+        background: #C004DE;
+    }
+}
+.btn-action-outline.style-2 {
+    border-radius: 0;
+    border:1px solid#fff;
+    padding: 15px 39px;
+    text-transform: uppercase;
+    font-family: 'Russo One';
+    font-weight: 400;
+    letter-spacing: 3px;
+    &::before {
+        background: #fff;
+    }
+
+    &:hover {
+        color: #C004DE;
+    }
+}
+.btn-action-outline.style-3 {
+    
+    text-transform: capitalize;
+    border: 2px solid rgba(35, 228, 161, 1);
+    border-radius: 50px;
+    padding: 12px 38px;
+    &::before {
+        background: rgba(35, 228, 161, 1);
+    }
+}
+.btn-action-outline.style-4 {
+    padding: 15px 39px;
+    border: 1px solid #B4E116;
+
+    svg {
+        position: relative;
+        z-index: 2;
+    }
+
+    &::before {
+        background: #B4E116;
+    }
+
+    &.active {
+        color: #181818;
+        &::before {
+            background: #B4E116;
+            width: 100%;
+        }
+    }
+
+    &:hover {
+        color: #181818;
+    }
+}
+.btn-action-outline.style-5 {
+    font-family: 'Oswald';
+    text-transform: uppercase;
+    padding: 12px 38px;
+    border-radius: 50px;
+    border: 2px solid rgba(226, 80, 229, 1);
+    &::before {
+        background: rgba(226, 80, 229, 1);
+    }
+}
+.btn-action-outline.style-6 {
+    font-family: 'Russo One';
+    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: 2.6px;
+    text-transform: uppercase;
+    padding: 9px 38px;
+
+    border: 2px solid;
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to left, rgba(134, 53, 189, 1), rgba(61, 191, 187, 1));
+    position: relative;
+    &::before {
+        background: linear-gradient(to left, rgba(134, 53, 189, 1), rgba(61, 191, 187, 1));
+    }
+}
+.btn-action-b {
+    padding: 10px 30px;
+    border-radius: 12px;
+    font-family: $font-main;
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    
+    
+    &:hover {
+        background: var(--primary-color);
+        color: $white;
+    }
+
+    
+}
+
+.group-button .btn-action , .group-button .btn-action-b {
+    @include desktop-1200 {
+        padding: 10px 15px;
+    }
+}
+
+/* Scroll Top
+-------------------------------------------------------------- */
+#scroll-top {
+    position             : fixed;
+    display              : block;
+    width                : 50px;
+    height               : 50px;
+    line-height          : 50px;
+    border-radius        : 4px;
+    text-align           : center;
+    z-index              : 999;
+    right                : 14px;
+    bottom               : 23px;
+    border-radius        : 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius   : 50%;
+    -ms-border-radius    : 50%;
+    -o-border-radius     : 50%;
+    opacity              : 0;
+    visibility           : hidden;
+    cursor               : pointer;
+    overflow             : hidden;
+    background: #fff;
+}
+
+#scroll-top.show {
+    right     : 15px;
+    opacity   : 1;
+    visibility: visible;
+}
+
+#scroll-top:before,
+#scroll-top:after {
+    content           : "";
+    position          : absolute;
+    top               : 0;
+    left              : 0;
+    width             : 100%;
+    height            : 100%;
+}
+
+#scroll-top:before {
+    z-index         : -1;
+    background: var(--primary-color);
+}
+
+
+#scroll-top:after {
+    font-family: "icomoon";
+    content: "\e900";
+    font-size  : 18px;
+    color      : #ffffff;
+    font-weight: 600;
+    transform: rotate(-180deg);
+}
+
+#scroll-top:hover {
+    transform: translateY(-7%);
+}
+
+
+.btn-action-outli.style-9 {
+    background: linear-gradient(153.06deg, #050231 -0.31%, #050231 99.69%) padding-box, linear-gradient(153.06deg, rgba(67, 136, 221, 1)  -0.31%, rgba(255, 69, 129, 1) 99.69%) border-box;
+    
+    padding: 7px 40px;
+
+    border-radius: 100px;
+    border: 1px solid transparent;
+
+    &:hover {
+        color: #fff;
+        background: linear-gradient(153.06deg, rgba(67, 136, 221, 1) -0.31%, rgba(255, 69, 129, 1) 99.69%) padding-box, linear-gradient(153.06deg, rgba(67, 136, 221, 1)  -0.31%, rgba(255, 69, 129, 1) 99.69%) border-box;
+    }
+}

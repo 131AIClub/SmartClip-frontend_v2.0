@@ -1,6 +1,6 @@
 <!-- 这是登录注册的.vue文件 -->
 <template>
-  <a-modal class="sign-modal" v-model:visible="store.show_sign_modal" @cancel="cancel" :closable="false"
+  <a-modal class="sign-modal" v-model:visible="store.show_sign_page" @cancel="cancel" :closable="false"
            :footer="false" @close="is_register=false">
     <template #title>
       {{ !is_register ? "登录" : "注册" }}
@@ -97,7 +97,7 @@ const register = async () => {
     store.user = res.data.user
     store.is_login = true
     localStorage.setItem("token", res.data.token)
-    store.show_sign_modal = false
+    store.show_sign_page = false
     const next = route.query.next && (typeof route.query.next === "string" ? route.query.next : route.query.next[0])
     if (next) await router.push(next)
     if(store.$state.dark === true)
@@ -116,7 +116,7 @@ const login = async () => {
     store.user = res.data.user
     store.is_login = true
     localStorage.setItem("token", res.data.token)
-    store.show_sign_modal = false
+    store.show_sign_page = false
     const next = route.query.next && (typeof route.query.next === "string" ? route.query.next : route.query.next[0])
     if (next) await router.push(next)
     if(store.$state.dark === true)
@@ -125,7 +125,6 @@ const login = async () => {
     Notification.warning(res.msg)
   }
 }
-
 
 </script>
 

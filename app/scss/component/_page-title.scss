@@ -1,0 +1,39 @@
+@use '../abstracts/' as *;
+
+.page-title {
+    padding: 162px 0 61px;
+    background: url('./../../assets/images/background/bg-pagetitle.jpg') no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: relative;
+
+    text-align: center;
+
+    &::before {
+        @include absolute;
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), rgba(28, 6, 74, 0.7);
+        transform: matrix(1, 0, 0, -1, 0, 0);
+    }
+
+    .content {
+        position: relative;
+        z-index: 1;
+        padding: 0 270px;
+
+        .desc {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
+            margin-top: 23px;
+        }
+
+        @include tablet {
+            padding: 0 70px;
+        }
+        @include mobile {
+            padding: 0;
+        }
+    }
+}
