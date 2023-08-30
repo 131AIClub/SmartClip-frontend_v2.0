@@ -42,8 +42,8 @@
 
       <!-- 输入URL，或者点击使用在这里 -->
       <div>
-        <el-input v-model="store.$state.video_URL" placeholder="输入你的视频URL" class="input-with-select" style="width: 800px;height: 50px;"
-          size="large">
+        <el-input v-model="store.$state.video_URL" placeholder="输入你的视频URL" class="input-with-select"
+          style="width: 800px;height: 50px;" size="large">
           <!-- <template #prepend>
             <el-select v-model="store.$state.video_info.video_platform" placeholder="选择平台" style="width: 120px;">
               <el-option label="哔哩哔哩动画" value="1" />
@@ -84,14 +84,19 @@
       <div class="text-5xl font-bold">
         <span class="text-pink-500">
           114514 clips generated
-        </span> 
+        </span>
         by 100+ creators！
       </div>
+
+
+
     </a-space>
 
     <div class="h-[5vh] "></div>
 
-
+      <!--test-->
+        <!-- <time-line-canvas></time-line-canvas> -->
+      <!--test-->
 
   </div>
 </template>
@@ -101,7 +106,11 @@
 import { useRouter } from "vue-router";
 import { UseStore } from "@/store";
 import { ElMessage } from 'element-plus'
-import { ref,onUnmounted,onMounted } from 'vue'
+import { ref, onUnmounted, onMounted } from 'vue'
+
+//test
+// import TimeLineCanvas from "../components/tool/timeline-canvas.vue";
+//
 
 const router = useRouter()
 const store = UseStore()
@@ -116,8 +125,7 @@ const store = UseStore()
 // ])
 
 const getStarted = () => {
-  if(!store.$state.is_login)
-  {
+  if (!store.$state.is_login) {
     ElMessage({
       type: "error",
       message: "请先登录！",
@@ -136,15 +144,15 @@ const getStarted = () => {
 document.body.setAttribute('arco-theme', 'dark')
 
 //切换首页时显示/隐藏首页模板
-onMounted(() => {
-    if(document.body.id === "hid")
-      document.body.removeAttribute("id")
-    
-})
-onUnmounted(() => {
-    if(document.body.id !== "hid")
-      document.body.setAttribute("id","hid")
-})
+// onMounted(() => {
+//   if (document.body.id === "hid")
+//     document.body.removeAttribute("id")
+
+// })
+// onUnmounted(() => {
+//   if (document.body.id !== "hid")
+//     document.body.setAttribute("id", "hid")
+// })
 
 </script>
 
@@ -183,8 +191,7 @@ onUnmounted(() => {
   background-color: var(--el-fill-color-blank);
 }
 
-#hid  .template{
+#hid .template {
   display: none;
 }
-
 </style>

@@ -40,6 +40,7 @@ declare module 'vue' {
     TaskCenter: typeof import('./src/components/dashboard/task_center/TaskCenter.vue')['default']
     TaskDetail: typeof import('./src/components/dashboard/task_detail/TaskDetail.vue')['default']
     TaskDetailLive: typeof import('./src/components/dashboard/task_detail/TaskDetailLive.vue')['default']
+    TimelineCanvas: typeof import('./src/components/tool/timeline-canvas.vue')['default']
     UserInformation: typeof import('./src/components/card/UserInformation.vue')['default']
     UserPersona: typeof import('./src/components/dashboard/UserPersona.vue')['default']
     UserProfile: typeof import('./src/components/dashboard/account_information/UserProfile.vue')['default']

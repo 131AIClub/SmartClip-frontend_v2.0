@@ -19,6 +19,14 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    //任务编辑界面，也作为一级界面
+    path:"/task-credit",
+    component:() => import("@/views/VideoCredit.vue"),
+    meta: {
+      depth: 0
+    }
+  },
+  {
     path: "/dashboard",
     component: () => import("@/views/DashboardPage.vue"),
     children: [
@@ -136,7 +144,7 @@ const routes: Array<RouteRecordRaw> = [
           dashboard_breadcrumb: ["全部任务","直播推流任务","任务详情"]
         }
       },
-      {//视频资源库
+      {//任务中心
         path:"task-center",
         component: () => import("@/components/dashboard/task_center/TaskCenter.vue"),
         meta: {
@@ -145,7 +153,17 @@ const routes: Array<RouteRecordRaw> = [
           dashboard_menu: "3",
           dashboard_breadcrumb: ["任务中心"]
         }
-      }
+      },
+      // {
+      //   path:"task-credit",
+      //   component: () => import("@/components/dashboard/task_center/VideoCredit.vue"),
+      //   meta: {
+      //     auth:true,
+      //     depth:2,
+      //     dashboard_menu: "3",
+      //     dashboard_breadcrumb: ["任务编辑"]
+      //   }
+      // }
     ]
   }
 ]
