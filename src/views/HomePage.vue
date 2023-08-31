@@ -144,15 +144,15 @@ const getStarted = () => {
 document.body.setAttribute('arco-theme', 'dark')
 
 //切换首页时显示/隐藏首页模板
-// onMounted(() => {
-//   if (document.body.id === "hid")
-//     document.body.removeAttribute("id")
+onMounted(() => {
+  if (document.body.id === "hid")
+    document.body.removeAttribute("id")
 
-// })
-// onUnmounted(() => {
-//   if (document.body.id !== "hid")
-//     document.body.setAttribute("id", "hid")
-// })
+})
+onUnmounted(() => {
+  if (document.body.id !== "hid")
+    document.body.setAttribute("id", "hid")
+})
 
 </script>
 

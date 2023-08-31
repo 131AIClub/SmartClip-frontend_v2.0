@@ -1,4 +1,7 @@
 <template>
+
+  <div class="mt-auto border-t border-white"></div>
+
   <canvas
     @touchmove="touchmove"
     @touchend="touchend"
@@ -8,6 +11,7 @@
     :height="height"
     ref="canvas"
   ></canvas>
+
 </template>
 
 <script>
@@ -39,7 +43,7 @@ export default {
     // 
     height: {
       type:[Number, String],
-      default: 80,
+      default: 120,
     },
     // 中间的时间,
     startMeddleTime: String,
@@ -68,7 +72,8 @@ export default {
       default() {
         return {
           //背景
-          background: "#2b2f33",
+          // background: "#2b2f33",
+          background: "rgb(0,0,0)",
           //中间线
           meddleLine: "#33CC33",
           //中间时间
