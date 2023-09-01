@@ -137,14 +137,12 @@ const toSignIn = async () => {
         store.is_login = true
         localStorage.setItem("token", res.data.token)
         // store.show_sign_page = false
-        const next = route.query.next && (typeof route.query.next === "string" ? route.query.next : route.query.next[0])
-        if (next) await router.push(next)
-        //这里针对白天黑夜模式需要修改
-        // if (store.$state.dark === true)
-        //     store.toggleTheme()
+        // const next = route.query.next && (typeof route.query.next === "string" ? route.query.next : route.query.next[0])
+        // if (next) await router.push(next)
+
+        router.push("/")
     } else {
-        Notification.warning({
-            title: '登录失败',
+        Notification.error({
             content: res.msg,
             closable: true,
             duration: 1000000,
@@ -173,14 +171,12 @@ const toSignUp = async () => {
         store.is_login = true
         localStorage.setItem("token", res.data.token)
         // store.show_sign_page = false
-        const next = route.query.next && (typeof route.query.next === "string" ? route.query.next : route.query.next[0])
-        if (next) await router.push(next)
-        //这里针对白天黑夜模式需要修改
-        if (store.$state.dark === true)
-            store.toggleTheme()
+        // const next = route.query.next && (typeof route.query.next === "string" ? route.query.next : route.query.next[0])
+        // if (next) await router.push(next)
+
+        router.push("/")
     } else {
-        Notification.warning({
-            title: '注册失败',
+        Notification.error({
             content: res.msg,
             closable: true,
             duration: 1000000,

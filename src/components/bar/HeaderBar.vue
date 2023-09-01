@@ -1,6 +1,7 @@
 <!-- 这是顶部栏的.vue文件 -->
 <template>
-  <div class="fixed left-0 top-0 bg-[var(--theme-dark-2)] w-full border-b border-[var(--theme-gray-3)] z-50">
+  <!-- <div class="fixed left-0 top-0 bg-[var(--theme-dark-2)] w-full border-b border-[var(--theme-gray-3)] z-50 "> -->
+  <div class="fixed left-0 top-0  w-full border-b border-[var(--theme-gray-3)] z-50 " style="background-color:  #020617;">
     <div class="h-12 md:h-16 px-3 md:px-8 flex justify-between items-center">
 
       <div class="flex justify-start items-center gap-1">
@@ -20,7 +21,7 @@
         <a-button @click="router.push('/task-credit')">测试视频编辑页面</a-button>
 
         <!-- 任务中心 -->
-        <a-button  @click="toTaskCenter"  size="large">任务中心</a-button>
+        <a-button @click="toTaskCenter" size="large">任务中心</a-button>
         <!-- 充值按钮 -->
         <a-button @click="toPayment" size="large">充值</a-button>
         <!-- 改变主题：黑/白 -->
@@ -35,7 +36,18 @@
             src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp" />
         </a-avatar>
 
-        <a-button  @click="router.push('/log-in')"  size="large">登录</a-button>
+        <a-button v-if="!store.is_login" @click="router.push('/log-in')" size="large">
+          登录
+        </a-button>
+
+        <div v-else>
+          <a-popconfirm content="确认退出登录？" @ok="logOut" type="warning" position="br">
+            <a-button size="large">
+              退出登录
+            </a-button>
+          </a-popconfirm>
+        </div>
+
       </div>
 
     </div>
@@ -59,8 +71,7 @@ const toHomePage = () => {
 
 //前往任务中心
 const toTaskCenter = () => {
-  if(!store.$state.is_login)
-  {
+  if (!store.$state.is_login) {
     ElMessage({
       type: "error",
       message: "请先登录！",
@@ -74,8 +85,7 @@ const toTaskCenter = () => {
 
 //点击充值按钮触发事件
 const toPayment = () => {
-  if(!store.$state.is_login)
-  {
+  if (!store.$state.is_login) {
     ElMessage({
       type: "error",
       message: "请先登录！",
@@ -85,6 +95,17 @@ const toPayment = () => {
   }
 
   router.push('/dashboard/payment')
+}
+
+//退出登录
+const logOut = () => {
+  store.is_login = false
+  router.push("/")
+  ElMessage({
+      type: "success",
+      message: "退出成功",
+      center: true
+    })
 }
 
 </script>

@@ -143,17 +143,6 @@ const getStarted = () => {
 // store.$state.dark = true
 document.body.setAttribute('arco-theme', 'dark')
 
-//切换首页时显示/隐藏首页模板
-onMounted(() => {
-  if (document.body.id === "hid")
-    document.body.removeAttribute("id")
-
-})
-onUnmounted(() => {
-  if (document.body.id !== "hid")
-    document.body.setAttribute("id", "hid")
-})
-
 </script>
 
 <style >
@@ -191,7 +180,4 @@ onUnmounted(() => {
   background-color: var(--el-fill-color-blank);
 }
 
-#hid .template {
-  display: none;
-}
 </style>

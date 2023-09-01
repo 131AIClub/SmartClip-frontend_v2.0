@@ -125,7 +125,7 @@
     
 <script setup lang="ts">
 import { client } from "@/assets/lib/request";
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch,onMounted } from "vue";
 import { DateParser } from "@/assets/lib/utils";
 import { TableData } from "@arco-design/web-vue"
 import { UseStore } from "@/store";
@@ -135,6 +135,9 @@ import TaskCard from "@/components/card/TaskCard.vue";
 
 const store = UseStore()
 store.loading = true
+
+//切换主题为白色
+document.body.removeAttribute('arco-theme')
 
 const page = ref(0)
 const loading = ref(false)
@@ -421,8 +424,6 @@ store.loading = false
 </script>
     
 <style  lang="less">
-#hid .template {
-    display: none;
-}
+
 </style>
     
