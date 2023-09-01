@@ -1,4 +1,4 @@
-<!-- 这是登录注册的.vue文件 -->
+这是登录注册的.vue文件
 <template>
   <a-modal class="sign-modal" v-model:visible="store.show_sign_page" @cancel="cancel" :closable="false"
            :footer="false" @close="is_register=false">

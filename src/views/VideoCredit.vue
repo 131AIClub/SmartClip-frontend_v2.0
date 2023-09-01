@@ -12,7 +12,8 @@
                 <div>
                     <a-space>
                         <a-button type="text" class="text-white font-bold text-xl" shape="round" size="large"
-                            style="height: 50px;">
+                            style="height: 50px;"
+                            @click="toTaskCenter">
                             <template #icon>
                                 <icon-arrow-left />
                             </template>
@@ -42,7 +43,7 @@
                     <a-divider style="background-color: #74787c; height: 1px;"></a-divider>
                     <a-space>
                         <a-radio-group v-model:model-value="creditContent">
-                            <a-grid :cols="2" :col-gap="10">
+                            <a-grid :cols="2" :col-gap="20">
                                 <a-grid-item>
                                     <a-radio value="1">
                                         <template #radio="{ checked }">
@@ -78,10 +79,10 @@
 
                 <!-- 具体内容 -->
                 <div>
-                    <el-scrollbar height="550px" v-if="creditContent === '1'">
+                    <el-scrollbar height="520px" v-if="creditContent === '1'">
                         <p v-for="item in 20" :key="item" class="scrollbar-demo-item">test111</p>
                     </el-scrollbar>
-                    <el-scrollbar height="550px" v-if="creditContent === '2'">
+                    <el-scrollbar height="520px" v-if="creditContent === '2'">
                         <p v-for="item in 20" :key="item" class="scrollbar-demo-item">test222</p>
                     </el-scrollbar>
                 </div>
@@ -90,7 +91,7 @@
 
             <!-- 水平分割线 -->
             <!-- <div class="w-px  " style="height: 780px; background-color: #74787c;"></div> -->
-            <a-divider direction="vertical" style="background-color: #74787c; height: 780px;"></a-divider>
+            <a-divider direction="vertical" style="background-color: #74787c; height: 740px;"></a-divider>
 
             <!-- 右边 -->
             <div class="flex-grow p-4" style="flex: 1;">
@@ -149,7 +150,7 @@
         </div>
 
         <div class="mt-auto">
-            <time-line-canvas></time-line-canvas>
+            <time-line></time-line>
         </div>
     </div>
 </template>
@@ -157,10 +158,13 @@
 <script setup lang="ts">
 
 import TimeLineCanvas from "../components/tool/timeline-canvas.vue";
+import TimeLine from "@/components/tool/TimeLine.vue";
 import { onMounted, ref } from "vue";
 import { UseStore } from "@/store";
+import {useRouter} from "vue-router";
 
 const store = UseStore()
+const router = useRouter()
 
 document.body.setAttribute('arco-theme', 'dark')
 
@@ -172,6 +176,12 @@ document.body.setAttribute('arco-theme', 'dark')
 
 const creditContent = ref("1")
 const isVideoPlay = ref(false)
+
+//返回任务中心
+const toTaskCenter = () => {
+    router.push("/dashboard/task-center")
+}
+
 
 //右侧视频按钮相关函数
 const lastClip = () => {
@@ -198,7 +208,7 @@ const nextClip = () => {
 <style scoped lang="less">
 
 #radioItem {
-    width: 360px;
+    width: 380px;
     height: 40px;
     display: flex;
     align-items: center;
@@ -206,7 +216,7 @@ const nextClip = () => {
     border-radius: 15px;
 }
 
-//这个没用，放心删掉
+//这个没用，正式使用时放心删掉
 .scrollbar-demo-item {
     display: flex;
     align-items: center;

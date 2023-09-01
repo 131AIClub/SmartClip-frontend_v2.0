@@ -26,11 +26,15 @@
       <!-- 大标题 -->
       <!-- <div class="text-7xl font-bold ">一站式视频剪辑、编辑、投放平台</div> -->
       <div class="text-7xl font-bold">
-        一站式视频
+        <span class="text-white">
+          一站式视频
+        </span>
         <span class="text-pink-500">
           剪辑、编辑、投放
         </span>
+        <span class="text-white">
         平台
+        </span>
       </div>
 
 
@@ -85,7 +89,10 @@
         <span class="text-pink-500">
           114514 clips generated
         </span>
-        by 100+ creators！
+        <span class="text-white">
+          by 100+ creators！
+        </span>
+
       </div>
 
 
@@ -99,6 +106,12 @@
       <!--test-->
 
   </div>
+
+  <div>
+    
+    <div class="h-[5vh] "></div>
+  </div>
+
 </template>
 
 <script setup lang="ts">

@@ -174,33 +174,31 @@ const router = createRouter({
 })
 
 //没有登录就进行重定向
-router.beforeEach((to, from, next) => {
-  const store = UseStore()
-  if (!store.initialized) {
-    const inter = setInterval(() => {
-      if (store.initialized) {
-        if (to.meta.auth && !store.is_login) {
-          next(`/?next=${to.path}`)
-          // router.push('/log-in')
-          store.show_sign_page = true
-        } else {
-          next()
-        }
-        clearInterval(inter)
-      }
-    }, 50)
-  } else {
-    if (to.meta.auth && !store.is_login) {
-      next(`/?next=${to.path}`)
-      // router.push('/log-in')
-      store.show_sign_page = true
-      return
-    }
-    next()
-  }
-
-
-})
+// router.beforeEach((to, from, next) => {
+//   const store = UseStore()
+//   if (!store.initialized) {
+//     const inter = setInterval(() => {
+//       if (store.initialized) {
+//         if (to.meta.auth && !store.is_login) {
+//           next(`/?next=${to.path}`)
+//           // router.push('/log-in')
+//           store.show_sign_page = true
+//         } else {
+//           next()
+//         }
+//         clearInterval(inter)
+//       }
+//     }, 50)
+//   } else {
+//     if (to.meta.auth && !store.is_login) {
+//       next(`/?next=${to.path}`)
+//       // router.push('/log-in')
+//       store.show_sign_page = true
+//       return
+//     }
+//     next()
+//   }
+// })
 
 export const safeBack = function (path: string) {
   return !window.history.state.back && path ? router.replace(path || "/") : router.back()
