@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, ref} from "vue"
+import {computed, onMounted, ref} from "vue"
 
 //整个组件的高度
 const componentHeight=ref(150)
@@ -34,55 +34,135 @@ const cursorX=ref(timeUnitWidth.value)
 //时间轴滚动条的偏移量
 const scrollOffset=ref(0)
 
+//像素值与时间转换的工具函数（时间单位为毫秒）
+const timeToPx= (time:number) => (time / scale.value + 1) * timeUnitWidth.value
+const pxToTime=(px:number) => ((px / timeUnitWidth.value) - 1) * scale.value
+
 //测试用的切片信息
 const clips=ref([
   {
-    "startTime":5,
-    "endTime":10
+    "startTime":5*1000,
+    "endTime":20*1000
+  },
+  {
+    "startTime":30*1000,
+    "endTime":50*1000
   }
 ])
 
-class DraggableCursor{
-  xOffset:number
+//记录所有切片左边以及右边端点的像素值
+const clipLeftRightPx=ref([
 
-}
+])
 
-const clipCursorXArray=computed(()=>{
-  let result=[]
+//挂载事件
+//把clips转成clipLeftRightPx
+onMounted(()=>{
   for(let i=0;i<clips.value.length;i++){
-    let clip=clips[i]
+    let clip=clips.value[i]
 
+    let startPx=timeToPx(clip["startTime"])
+    let endPx=timeToPx(clip["endTime"])
+
+    clipLeftRightPx.value.push([startPx,endPx])
   }
 })
+
+const changeScale = (newScale : number)=>{
+  let timeCursorTime=pxToTime(cursorX.value)
+
+  scale.value=newScale
+
+  //Reposition clips
+  clipLeftRightPx.value=[]
+  for(let i=0;i<clips.value.length;i++){
+    let clip=clips.value[i]
+
+    let startPx=timeToPx(clip["startTime"])
+    let endPx=timeToPx(clip["endTime"])
+
+    clipLeftRightPx.value.push([startPx,endPx])
+  }
+
+  //Reposition time cursor
+  cursorX.value = timeToPx(timeCursorTime)
+}
+
+type DraggableCursor={
+  moveTo: (newX:number)=>void,
+  getActualTime: ()=>number
+}
+
+let timeCursorDraggable : DraggableCursor = {
+  moveTo: (newX: number)=>{
+    cursorX.value = newX
+  },
+  getActualTime: () => {
+    return pxToTime(cursorX.value)
+  }
+}
+
+const getClipBarDraggable=(clipIndex:number,left:boolean)=>{
+  let draggable:DraggableCursor = {
+    moveTo(newX:number):void{
+      if(left){
+        //检查，是否左边大于右边
+        if(newX > clipLeftRightPx.value[clipIndex][1]){
+          newX=clipLeftRightPx.value[clipIndex][1]
+        }
+        clipLeftRightPx.value[clipIndex][0]=newX
+      }else{
+        //检查，是否右边小于左边
+        if(newX < clipLeftRightPx.value[clipIndex][0]){
+          newX=clipLeftRightPx.value[clipIndex][0]
+        }
+        clipLeftRightPx.value[clipIndex][1]=newX
+      }
+
+    },
+    getActualTime():number{
+      let currentPx=clipLeftRightPx.value[clipIndex][left? 0 : 1]
+      return pxToTime(currentPx)
+    }
+  }
+
+  return draggable
+}
 
 //TODO scale的时候同时设置每个可拖动元素的新的位置（包括时间游标）
 
 //处理拖动事件
-let currentDragX=cursorX
+let currentDraggableCursor = timeCursorDraggable
 
-const cursorMouseDown=(evt:MouseEvent)=>{
-  //TODO 更改currentDragX指向（根据evt来识别是哪个DraggableCursor）
+const cursorMouseDown=(evt:MouseEvent,draggable:DraggableCursor)=>{
   dragMode.value=true
+  currentDraggableCursor=draggable
 }
 
 const cursorMouseUp=()=>{
   dragMode.value=false
 }
 
+//处理区鼠标移动事件
 const cursorMouseMove=(evt:MouseEvent)=>{
   if(dragMode.value){
     let newX : number = evt.clientX + scrollOffset.value
-    if(newX < timeUnitWidth.value || newX > maxValidX.value){
-      //左右越界
+    if(newX < timeUnitWidth.value){
+      //左越界
       dragMode.value=false
+      currentDraggableCursor.moveTo(timeUnitWidth.value)
+    }else if(newX > maxValidX.value){
+      //右越界
+      dragMode.value=false
+      currentDraggableCursor.moveTo(maxValidX.value)
     }else if(evt.offsetY < 5 || evt.offsetY > operateAreaHeight.value - 5){
       //上下越界
       dragMode.value=false
-    }else{
-      currentDragX.value=evt.clientX + scrollOffset.value
+    }else
+      currentDraggableCursor.moveTo(evt.clientX + scrollOffset.value)
     }
-  }
 }
+
 
 //滚动条滚动时的事件
 const scrollMove=(evt: {scrollLeft: number, scrollTop: number})=>{
@@ -90,7 +170,7 @@ const scrollMove=(evt: {scrollLeft: number, scrollTop: number})=>{
 }
 
 //获取当前时间游标的时间
-const currentTime=computed(()=> ((cursorX.value / timeUnitWidth.value) - 1) * (scale.value / 1000))
+const currentTime=computed(()=> currentDraggableCursor.getActualTime())
 
 //阻止默认拖拽事件（防止禁止拖拽图标）
 const preventDragEvent=(evt:DragEvent)=>{
@@ -114,9 +194,11 @@ const timeAreaInteract=(evt:PointerEvent)=>{
 
 <template>
 
-<div class="mt-auto border-t border-slate-700"></div>
-
-  <!-- <span style="position:static;">这是 {{currentTime}}</span> -->
+  <span style="position:static;">
+    这是 {{currentTime}}
+    <button @click="changeScale(scale + 1000)">Scale Up</button>
+    <button @click="changeScale(scale - 1000)">Scale Down</button>
+  </span>
 
     <el-scrollbar @scroll="scrollMove">
       <div style="position: relative; height: 150px">
@@ -145,12 +227,12 @@ const timeAreaInteract=(evt:PointerEvent)=>{
              @mouseup="cursorMouseUp" @mousemove="cursorMouseMove" >
           <!--    这里展示高亮片段-->
 
-          <div class="time-line-highlight-area" style="left: 50px; width: 60px;
-           height: 30%; top: 20%; position: absolute;background-color: #6b21a8">
-            <div class="highlight-left-bracket" style="background-color: #a855f7; left: 0;
-             width: 4px; height: 100%; border-radius: 4px; position: absolute"></div>
-            <div class="highlight-right-bracket" style="background-color: #a855f7;left: calc(100% - 4px); top: 0;
-             width: 4px; height: 100%; border-radius: 4px; position: absolute"></div>
+          <div v-for="(pos,i) in clipLeftRightPx" class="time-line-highlight-area" :style="{left:pos[0]+'px',
+                width:(pos[1]-pos[0])+'px'}">
+            <div class="highlight-left-bracket"
+                 @mousedown="(evt:MouseEvent)=>cursorMouseDown(evt,getClipBarDraggable(i,true))"></div>
+            <div class="highlight-right-bracket"
+                 @mousedown="(evt:MouseEvent)=>cursorMouseDown(evt,getClipBarDraggable(i,false))"></div>
           </div>
         </div>
 
@@ -161,7 +243,7 @@ const timeAreaInteract=(evt:PointerEvent)=>{
           </svg>
 
           <div class="cursor-area" draggable="false" @drag="(evt:DragEvent)=>{evt.preventDefault()}"
-               @mouseup="cursorMouseUp" @mousedown="cursorMouseDown" @mousemove="cursorMouseMove">
+               @mouseup="cursorMouseUp" @mousedown="(evt:MouseEvent)=>cursorMouseDown(evt,timeCursorDraggable)" @mousemove="cursorMouseMove">
 
           </div>
         </div>
@@ -170,6 +252,36 @@ const timeAreaInteract=(evt:PointerEvent)=>{
 </template>
 
 <style scoped>
+
+.highlight-right-bracket{
+  background-color: #a855f7;
+  left: calc(100% - 4px);
+  top: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 4px;
+  position: absolute;
+  cursor: ew-resize;
+  z-index: 999;
+}
+
+.highlight-left-bracket{
+  background-color: #a855f7;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 4px;
+  position: absolute;
+  cursor: ew-resize;
+  z-index: 999;
+}
+
+.time-line-highlight-area{
+  height: 30%;
+  top: 20%;
+  position: absolute;
+  background-color: #6b21a8;
+}
 
 .no-select-text {
   -webkit-touch-callout: none;

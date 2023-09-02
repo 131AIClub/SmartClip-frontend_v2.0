@@ -19,9 +19,17 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    //任务编辑界面，也作为一级界面
-    path:"/task-credit",
-    component:() => import("@/views/VideoCredit.vue"),
+    //任务编辑的内容界面
+    path:"/task-credit-content",
+    component:() => import("@/views/ContentCredit.vue"),
+    meta: {
+      depth: 0
+    }
+  },
+  {
+    //任务编辑的样式界面
+    path:"/task-credit-template",
+    component:() => import("@/views/TemplateCredit.vue"),
     meta: {
       depth: 0
     }

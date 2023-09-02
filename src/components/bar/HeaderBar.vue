@@ -18,7 +18,7 @@
       <div class="flex justify-end items-center gap-3">
 
         <!-- 测试按钮 -->
-        <a-button @click="router.push('/task-credit')">测试视频编辑页面</a-button>
+        <a-button @click="router.push('/task-credit-content')">测试视频编辑页面</a-button>
 
         <!-- 任务中心 -->
         <a-button @click="toTaskCenter" size="large">任务中心</a-button>
