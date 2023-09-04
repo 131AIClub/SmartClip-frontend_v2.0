@@ -93,7 +93,8 @@ declare global {
   type Template = {
     templateId: number,
     templateName: string,
-    desc: string
+    previewImageUrl: string,
+    previewVideoUrl: string,
   }
 
   //此处加了一个视频数据的preview，但是该属性在接口文档中是没有的！！

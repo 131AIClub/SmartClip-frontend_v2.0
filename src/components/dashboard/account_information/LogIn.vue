@@ -1,16 +1,16 @@
 <!-- 这是登录页面的.vue文件 -->
 <template>
     <div>
-        <div class="flex justify-center items-center h-screen bg-black" >
+        <div class="flex justify-center items-center h-screen bg-black " >
 
             <!-- 设置垂直间距 列宽统一设定为600px -->
             <div v-if="!registerPage" class="fixed"><!-- 登录页面 -->
                 <a-space direction="vertical" fill align="center">
-                    <div class="font-bold text-4xl">
+                    <div class="font-bold text-4xl text-white">
                         登录
                     </div>
 
-                    <div class="h-[1.5vh]"></div>
+                    <div class="h-[2vh]"></div>
 
                     <el-button class=" text-1.5xl " size="large" round color="#fffffb" :style="{ width: '600px' }">
                         <icon-tiktok-color />
@@ -20,7 +20,7 @@
                     <div class="h-[1.5vh]"></div>
 
                     <a-form :model="signInForm" layout="vertical">
-                        <a-form-item label="用户名:">
+                        <a-form-item label="用户名:" >
                             <a-input v-model="signInForm.username" size="large" allow-clear :style="{ width: '600px' }"
                                 placeholder="你的用户名" />
                         </a-form-item>

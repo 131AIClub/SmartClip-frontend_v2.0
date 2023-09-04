@@ -1,27 +1,57 @@
 <script setup lang="ts">
-import {computed, onMounted, ref} from "vue"
+// import {computed, defineEmits, defineExpose, defineProps, onMounted, ref} from "vue"
+import {computed,  onMounted, ref} from "vue"
+
+const props=defineProps({
+  totalTime:{
+    type:Number,
+    required:true
+  },
+  clips:{
+    type:Array,
+    required:true
+  }
+})
+
+const emit=defineEmits(["timeCursorChange","clipDurationChange"])
 
 //整个组件的高度
-const componentHeight=ref(150)
+const componentHeight=ref(180)
+//展示时间，放大缩小地方的高度
+const headerHeight=ref(30)
 //显示时间区域的高度
 const timeAreaHeight=ref(32)
 //操作区的高度
-const operateAreaHeight=computed(()=> componentHeight.value - timeAreaHeight.value)
+const operateAreaHeight=computed(()=> componentHeight.value - timeAreaHeight.value - headerHeight.value)
 
 //缩放大小，即每个小单位多长时间，单位为毫秒
 const scale=ref(1000)
-const totalTime=ref(1000*1000)
+const totalTime=ref(props.totalTime)
 
 //最多可以选到多少个单位
 const maxValidUnitNum=computed(()=> Math.ceil(totalTime.value / scale.value))
 //总共要画多少个小单位
-const unitNumToDraw=computed(()=> maxValidUnitNum.value + 10)
+const unitNumToDraw=computed(()=> {
+  if(timeUnitWidth.value * (maxValidUnitNum.value + 1) < window.innerWidth){
+    //补充到window宽度
+    return Math.floor(window.innerWidth / timeUnitWidth.value)
+  }else{
+    return maxValidUnitNum.value + 10
+  }
+})
 
 //一个小单位有多少像素，这里默认设置成10
 const timeUnitWidth=ref(10)
 
-//页面的总宽度（数值类型的和用在css上的）
-const pageWidth=computed(()=> timeUnitWidth.value * (unitNumToDraw.value + 1))
+//页面的总宽度
+//如果不足屏幕宽度，就绘制屏幕宽度大小
+const pageWidth=computed(()=> {
+  let width=timeUnitWidth.value * (unitNumToDraw.value + 1)
+  if(width < window.innerWidth)
+    width=window.innerWidth
+
+  return width
+})
 
 //最大的有效的x值
 const maxValidX=computed(()=> (maxValidUnitNum.value + 1) * timeUnitWidth.value)
@@ -39,16 +69,7 @@ const timeToPx= (time:number) => (time / scale.value + 1) * timeUnitWidth.value
 const pxToTime=(px:number) => ((px / timeUnitWidth.value) - 1) * scale.value
 
 //测试用的切片信息
-const clips=ref([
-  {
-    "startTime":5*1000,
-    "endTime":20*1000
-  },
-  {
-    "startTime":30*1000,
-    "endTime":50*1000
-  }
-])
+const clips=ref(props.clips)
 
 //记录所有切片左边以及右边端点的像素值
 const clipLeftRightPx=ref([
@@ -86,6 +107,8 @@ const changeScale = (newScale : number)=>{
 
   //Reposition time cursor
   cursorX.value = timeToPx(timeCursorTime)
+
+  moveScrollerToTimeCursor()
 }
 
 type DraggableCursor={
@@ -96,6 +119,7 @@ type DraggableCursor={
 let timeCursorDraggable : DraggableCursor = {
   moveTo: (newX: number)=>{
     cursorX.value = newX
+    emit("timeCursorChange",pxToTime(newX))
   },
   getActualTime: () => {
     return pxToTime(cursorX.value)
@@ -119,6 +143,14 @@ const getClipBarDraggable=(clipIndex:number,left:boolean)=>{
         clipLeftRightPx.value[clipIndex][1]=newX
       }
 
+      emit("clipDurationChange",{
+        "index":clipIndex,
+        "clip":{
+          "startTime":clipLeftRightPx.value[clipIndex][0],
+          "endTime":clipLeftRightPx.value[clipIndex][1]
+        }
+      })
+
     },
     getActualTime():number{
       let currentPx=clipLeftRightPx.value[clipIndex][left? 0 : 1]
@@ -128,8 +160,6 @@ const getClipBarDraggable=(clipIndex:number,left:boolean)=>{
 
   return draggable
 }
-
-//TODO scale的时候同时设置每个可拖动元素的新的位置（包括时间游标）
 
 //处理拖动事件
 let currentDraggableCursor = timeCursorDraggable
@@ -151,18 +181,17 @@ const cursorMouseMove=(evt:MouseEvent)=>{
       //左越界
       dragMode.value=false
       currentDraggableCursor.moveTo(timeUnitWidth.value)
-    }else if(newX > maxValidX.value){
+    }else if(newX > maxValidX.value + 20){
       //右越界
       dragMode.value=false
       currentDraggableCursor.moveTo(maxValidX.value)
-    }else if(evt.offsetY < 5 || evt.offsetY > operateAreaHeight.value - 5){
+    }else if(evt.offsetY < 2 || evt.offsetY > operateAreaHeight.value - 2){
       //上下越界
       dragMode.value=false
     }else
       currentDraggableCursor.moveTo(evt.clientX + scrollOffset.value)
     }
 }
-
 
 //滚动条滚动时的事件
 const scrollMove=(evt: {scrollLeft: number, scrollTop: number})=>{
@@ -190,18 +219,84 @@ const timeAreaInteract=(evt:PointerEvent)=>{
   }
 }
 
+//把时间游标移动到屏幕中心
+const timeLineScroller = ref<any>()
+const moveScrollerToTimeCursor=()=>{
+  let left=cursorX.value - window.innerWidth / 2
+  if(left < 0)
+    left = 0
+
+  timeLineScroller.value!.setScrollLeft(left)
+}
+
+const setTimeCursorTime=(newTime : number)=>{
+  cursorX.value = timeToPx(newTime)
+  moveScrollerToTimeCursor()
+}
+
+//计算格式化后的总时间
+const formattedTotalTime=computed(()=> convertTimestamp(totalTime.value))
+const formattedCurrentCursorTime=computed(()=> convertTimestamp(timeCursorDraggable.getActualTime()))
+
+function convertTimestamp(timestamp) {
+  // 创建一个新日期对象，用毫秒数初始化
+  let date = new Date(timestamp);
+
+  // 使用国际标准格式获取时间字符串
+  let timeStr = date.toISOString();
+
+  // 将时间字符串拆分为日期部分和时间部分，只保留时间部分
+  let timeParts = timeStr.split("T")[1].split(".");
+
+  // 获取小时，分钟，秒和毫秒
+  let hours = date.getUTCHours();
+  let minutes = date.getUTCMinutes();
+  let seconds = date.getUTCSeconds();
+  let milliseconds = timeParts[1];
+
+  // 如果小时为0，就不显示；如果分钟为0，就显示为00
+  let timeDisplay = (hours > 0 ? hours + ':' : '')
+      + (minutes < 10 ? '0' + minutes : minutes)
+      + ':' + (seconds < 10 ? '0' + seconds : seconds)
+      + '.' + milliseconds.replace("Z","");
+
+  return timeDisplay;
+}
+
+defineExpose({
+  setTimeCursorTime
+})
+
 </script>
 
 <template>
 
-  <span style="position:static;">
-    这是 {{currentTime}}
-    <button @click="changeScale(scale + 1000)">Scale Up</button>
-    <button @click="changeScale(scale - 1000)">Scale Down</button>
-  </span>
+<div class="mt-auto border-t border-slate-700"></div>
 
-    <el-scrollbar @scroll="scrollMove">
-      <div style="position: relative; height: 150px">
+<div class="h-[1vh]"></div>
+
+  <div :style="{height: headerHeight + 'px'}" class="header-area">
+    <div style="color: white; font-size: .875rem">
+<!--      展示时间-->
+      <span style="color: white">{{formattedCurrentCursorTime}}</span>
+      <span style="color: hsla(0,0%,100%,.6)"> / </span>
+      <span style="color: hsla(0,0%,100%,.6)">{{formattedTotalTime}}</span>
+    </div>
+
+    <div style="position:absolute; right: 0; display: flex;">
+<!--      放大和缩小-->
+      <div @click="changeScale(scale / 2)">
+        <svg t="1693634897326" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4046" width="32" height="32"><path d="M672.495448 771.063111C536.288206 861.520472 350.802077 846.716896 230.724063 726.652386 93.758646 589.702371 93.758646 367.662526 230.724063 230.712511 367.68948 93.762496 589.754297 93.762496 726.719714 230.712511 846.795912 350.775203 861.60252 536.236675 771.139544 672.42803 773.082599 674.008086 774.96705 675.706322 776.783972 677.52304L875.05372 775.781733C902.70344 803.428352 903.102472 847.853384 875.518408 875.434352 848.125328 902.824352 803.92872 903.040688 775.854586 874.969704L677.584842 776.711015C675.771042 774.897418 674.074508 773.01162 672.495448 771.063111L672.495448 771.063111ZM677.120149 677.058399C786.692482 567.498387 786.692482 389.86651 677.120149 280.306498 567.547815 170.746486 389.895962 170.746486 280.323628 280.306498 170.751294 389.86651 170.751294 567.498387 280.323628 677.058399 389.895962 786.61841 567.547815 786.61841 677.120149 677.058399ZM448 448 320 448 320 512 448 512 448 640 512 640 512 512 640 512 640 448 512 448 512 320 448 320 448 448Z" fill="#ffffff" p-id="4047"></path></svg>
+      </div>
+
+      <div @click="changeScale(scale * 2)" style="padding-left: 5px; padding-right: 5px">
+        <svg t="1693634968619" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5182" width="32" height="32"><path d="M672.495448 771.063111C536.288206 861.520472 350.802077 846.716896 230.724063 726.652386 93.758646 589.702371 93.758646 367.662526 230.724063 230.712511 367.68948 93.762496 589.754297 93.762496 726.719714 230.712511 846.795912 350.775203 861.60252 536.236675 771.139544 672.42803 773.082599 674.008086 774.96705 675.706322 776.783972 677.52304L875.05372 775.781733C902.70344 803.428352 903.102472 847.853384 875.518408 875.434352 848.125328 902.824352 803.92872 903.040688 775.854586 874.969704L677.584842 776.711015C675.771042 774.897418 674.074508 773.01162 672.495448 771.063111L672.495448 771.063111ZM677.120149 677.058399C786.692482 567.498387 786.692482 389.86651 677.120149 280.306498 567.547815 170.746486 389.895962 170.746486 280.323628 280.306498 170.751294 389.86651 170.751294 567.498387 280.323628 677.058399 389.895962 786.61841 567.547815 786.61841 677.120149 677.058399ZM320 448 320 512 640 512 640 448 320 448Z" fill="#ffffff" p-id="5183"></path></svg>
+      </div>
+    </div>
+  </div>
+
+    <el-scrollbar ref="timeLineScroller" @scroll="scrollMove" :style="{height: (timeAreaHeight + operateAreaHeight) + 'px' }">
+      <div style="position: relative" :style="{height: (timeAreaHeight + operateAreaHeight) + 'px' }">
         <div class="time-area">
           <!--    这里展示时间轴-->
 
@@ -228,11 +323,22 @@ const timeAreaInteract=(evt:PointerEvent)=>{
           <!--    这里展示高亮片段-->
 
           <div v-for="(pos,i) in clipLeftRightPx" class="time-line-highlight-area" :style="{left:pos[0]+'px',
-                width:(pos[1]-pos[0])+'px'}">
+                width:(pos[1]-pos[0])+'px'}"
+               @dragenter="preventDragEvent"
+               @dragstart="preventDragEvent"
+               @dragover="preventDragEvent">
             <div class="highlight-left-bracket"
-                 @mousedown="(evt:MouseEvent)=>cursorMouseDown(evt,getClipBarDraggable(i,true))"></div>
+                 @mousedown="(evt:MouseEvent)=>cursorMouseDown(evt,getClipBarDraggable(i,true))"
+                 @mousemove="cursorMouseMove"
+                 @dragenter="preventDragEvent"
+                 @dragstart="preventDragEvent"
+                 @dragover="preventDragEvent"></div>
             <div class="highlight-right-bracket"
-                 @mousedown="(evt:MouseEvent)=>cursorMouseDown(evt,getClipBarDraggable(i,false))"></div>
+                 @mousedown="(evt:MouseEvent)=>cursorMouseDown(evt,getClipBarDraggable(i,false))"
+                 @mousemove="cursorMouseMove"
+                 @dragenter="preventDragEvent"
+                 @dragstart="preventDragEvent"
+                 @dragover="preventDragEvent"></div>
           </div>
         </div>
 
@@ -252,6 +358,15 @@ const timeAreaInteract=(evt:PointerEvent)=>{
 </template>
 
 <style scoped>
+
+.header-area{
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  justify-content: center;
+  background-color: #020617;
+  width: 100%;
+}
 
 .highlight-right-bracket{
   background-color: #a855f7;
@@ -306,6 +421,7 @@ const timeAreaInteract=(evt:PointerEvent)=>{
   height: v-bind(timeAreaHeight + 'px');
   background-color: #020617;
   width: v-bind(pageWidth + 'px');
+  top: v-bind(headerHeight + 'px');
 }
 
 .time-area-interact{

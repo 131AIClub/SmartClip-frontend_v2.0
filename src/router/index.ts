@@ -19,6 +19,14 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    //任务中心界面
+    path:"/task-center",
+    component:() => import("@/components/dashboard/task_center/TaskCenter.vue"),
+    meta:{
+      depth: 0
+    }
+  },
+  {
     //任务编辑的内容界面
     path:"/task-credit-content",
     component:() => import("@/views/ContentCredit.vue"),
@@ -152,16 +160,16 @@ const routes: Array<RouteRecordRaw> = [
           dashboard_breadcrumb: ["全部任务","直播推流任务","任务详情"]
         }
       },
-      {//任务中心
-        path:"task-center",
-        component: () => import("@/components/dashboard/task_center/TaskCenter.vue"),
-        meta: {
-          auth:true,
-          depth:1,
-          dashboard_menu: "3",
-          dashboard_breadcrumb: ["任务中心"]
-        }
-      },
+      // {//任务中心
+      //   path:"task-center",
+      //   component: () => import("@/components/dashboard/task_center/TaskCenter.vue"),
+      //   meta: {
+      //     auth:true,
+      //     depth:1,
+      //     dashboard_menu: "3",
+      //     dashboard_breadcrumb: ["任务中心"]
+      //   }
+      // },
       // {
       //   path:"task-credit",
       //   component: () => import("@/components/dashboard/task_center/VideoCredit.vue"),

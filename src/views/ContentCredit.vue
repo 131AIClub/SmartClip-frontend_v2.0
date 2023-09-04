@@ -78,11 +78,11 @@
                 <!-- 具体内容 -->
                 <div>
                     <!-- 文本 -->
-                    <el-scrollbar height="520px" v-if="creditContent === '1'">
+                    <el-scrollbar height="497px" v-if="creditContent === '1'">
                         <p v-for="item in 20" :key="item" class="scrollbar-item">test111</p>
                     </el-scrollbar>
                     <!-- 标题 -->
-                    <el-scrollbar height="520px" v-if="creditContent === '2'">
+                    <el-scrollbar height="497px" v-if="creditContent === '2'">
                         <!-- <p v-for="item in 20" :key="item" class="scrollbar-demo-item">test222</p> -->
 
                         <div class="scrollbar-item">
@@ -114,8 +114,8 @@
 
                                     <!-- 输入框 -->
                                     <div>
-                                        <a-textarea placeholder="Please enter something" class="textarea-item" 
-                                        :max-length="250" auto-size/>
+                                        <a-textarea placeholder="Please enter something" class="textarea-item"
+                                            :max-length="250" auto-size />
                                     </div>
                                 </a-space>
 
@@ -133,7 +133,7 @@
 
             <!-- 水平分割线 -->
             <!-- <div class="w-px  " style="height: 780px; background-color: #74787c;"></div> -->
-            <a-divider direction="vertical" style="background-color: #74787c; height: 760px;"></a-divider>
+            <a-divider direction="vertical" style="background-color: #74787c; height:auto;"></a-divider>
 
             <!-- 右边 -->
             <div class="flex-grow p-4" style="flex: 1;">
@@ -153,34 +153,42 @@
 
                 <!-- 视频预览 -->
                 <div class="flex justify-center items-center">
-                    <video ref="videoItem" class="rounded-2xl overflow-hidden" style="object-fit: cover; width: 320px;">
-                        <source src="/videoTemplate.mp4" type="video/mp4">
+                    <video ref="videoItem" class="rounded-2xl overflow-hidden" style="object-fit: cover; width: 300px;">
+                        <source src="/videoTemplate.mp4" type="video/mp4" @ended="test">
                         该浏览器不支持播放视频
                     </video>
                 </div>
 
+                <div class="h-[1vh] "></div>
+
                 <!-- 视频控制按钮 -->
                 <div class="flex justify-center items-center">
 
-                    <a-button type="text" @click="lastClip" shape="circle" class="text-white text-lg">
+                    <a-button type="text" @click="lastClip" shape="circle" class="text-white text-lg" style="color: white;">
                         <template #icon>
                             <icon-backward />
                         </template>
                     </a-button>
 
-                    <a-button type="text" v-if="!isVideoPlay" @click="playVideo" shape="circle" class="text-white text-lg">
+                    <a-button type="text" v-if="!isVideoPlay" @click="playVideo" shape="circle" class="text-lg" style="color: white;">
                         <template #icon>
                             <icon-play-arrow />
                         </template>
                     </a-button>
 
-                    <a-button type="text" v-else @click="stopVideo" shape="circle" class="text-white text-lg">
+                    <a-button type="text" v-else @click="stopVideo" shape="circle" class="text-lg" style="color: white;">
                         <template #icon>
                             <icon-pause />
                         </template>
                     </a-button>
 
-                    <a-button type="text" @click="nextClip" shape="circle" class="text-white text-lg">
+                    <a-button type="text" @click="resetVideo"  shape="circle" class="text-lg" style="color: white;">
+                        <template #icon>
+                            <icon-record-stop />
+                        </template>
+                    </a-button>
+
+                    <a-button type="text" @click="nextClip" shape="circle" class="text-lg" style="color: white;">
                         <template #icon>
                             <icon-forward />
                         </template>
@@ -192,27 +200,34 @@
         </div>
 
         <div class="mt-auto">
-            <time-line></time-line>
+            <time-line ref="timeLine" :clips="clip" :totalTime="400 * 1000" @timeCursorChange="timeChange"
+                @clipDurationChange="clipDurationChange">
+            </time-line>
         </div>
     </div>
 </template>
   
 <script setup lang="ts">
 
-import { onMounted, ref } from "vue";
+import { ref,onMounted } from "vue";
 import { UseStore } from "@/store";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
+import TimeLine from "@/components/tool/TimeLine.vue";
 
 const store = UseStore()
 const router = useRouter()
+const route = useRoute()
 
-document.body.setAttribute('arco-theme', 'dark')
+//  document.body.setAttribute('arco-theme', 'dark')
 
+//修改主题配色
+onMounted(() => {
+  store.$state.dark = true
+})
+//
 
-// onMounted(() => {
-//   if (document.body.id !== "hid")
-//     document.body.setAttribute("id","hid")
-// })
+const test = () => {console.log("???")}
 
 const creditContent = ref("1")
 const isVideoPlay = ref(false)
@@ -225,31 +240,76 @@ const toTaskCenter = () => {
 
 //右侧视频按钮相关函数
 const lastClip = () => {
-
+    videoItem.value.currentTime -= 5
 }
 
 const playVideo = () => {
     isVideoPlay.value = !isVideoPlay.value
-    if(videoItem.value.paused)
+    if (videoItem.value.paused)
         videoItem.value.play()
 }
 
 const stopVideo = () => {
     isVideoPlay.value = !isVideoPlay.value
-    if(!videoItem.value.paused)
+    if (!videoItem.value.paused)
+        videoItem.value.pause()
+}
+
+const resetVideo = () => {
+    videoItem.value.currentTime = 0
+    if (isVideoPlay.value === true)
+        isVideoPlay.value = false
+    if (!videoItem.value.paused)
         videoItem.value.pause()
 }
 
 const nextClip = () => {
-    
+    videoItem.value.currentTime += 5
 }
 //
 
-//下一页的按钮
+//下一页的按钮，同时传递当前任务的task_id
 const toNext = () => {
-    router.push('/task-credit-template')
+    router.push({
+        path:'/task-credit-template',
+        query: {
+            task_id: route.query?.task_id
+        }
+    })
 }
 //
+
+
+//时间轴相关变量和方法
+const clip=ref([
+  {
+    "startTime":5*1000,
+    "endTime":20*1000
+  },
+  {
+    "startTime":30*1000,
+    "endTime":50*1000
+  }
+])
+
+const timeChange=(newTime : number)=>{
+  console.log(newTime)
+}
+
+const clipDurationChange=(evt)=>{
+  console.log(evt)
+}
+
+//使用ref获取组件
+const timeLine=ref<InstanceType<typeof TimeLine>>()
+
+//设置时间游标位置
+const clk = ()=>{
+   
+  timeLine.value.setTimeCursorTime(200*1000)
+}
+//
+
 
 
 </script>

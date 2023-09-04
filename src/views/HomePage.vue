@@ -33,7 +33,7 @@
           剪辑、编辑、投放
         </span>
         <span class="text-white">
-        平台
+          平台
         </span>
       </div>
 
@@ -66,7 +66,7 @@
 
       <div class="h-[5vh] "></div>
 
-      <div class="text-2xl font-bold">投放渠道支持</div>
+      <div class="text-2xl font-bold text-white">投放渠道支持</div>
 
       <div class="h-[1vh] "></div>
 
@@ -95,21 +95,14 @@
 
       </div>
 
-
-
     </a-space>
 
     <div class="h-[5vh] "></div>
 
-      <!--test-->
-        <!-- <time-line-canvas></time-line-canvas> -->
-      <!--test-->
+    <!--test-->
+    <!-- <time-line-canvas></time-line-canvas> -->
+    <!--test-->
 
-  </div>
-
-  <div>
-    
-    <div class="h-[5vh] "></div>
   </div>
 
 </template>
@@ -128,6 +121,7 @@ import { ref, onUnmounted, onMounted } from 'vue'
 const router = useRouter()
 const store = UseStore()
 
+// document.body.setAttribute('arco-theme', 'dark')
 
 //主页图片
 // const images = ref([
@@ -148,13 +142,11 @@ const getStarted = () => {
   }
 
   router.push("/dashboard/choose-task")
-  // if (store.$state.dark === true)
-  //   store.toggleTheme()
 }
 
 //默认主题为黑色
 // store.$state.dark = true
-document.body.setAttribute('arco-theme', 'dark')
+// document.body.setAttribute('arco-theme', 'dark')
 
 </script>
 
