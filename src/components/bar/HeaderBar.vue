@@ -148,9 +148,9 @@ onMounted(() => {
   left: 0;
   top: 0;
   width: 100%;
-  border-bottom: 1px solid var(--theme-gray-3);
+  // border-bottom: 1px solid var(--theme-gray-3); 边线
   z-index: 50;
-  background-color: white;
+  background-color: rgb(241,245,249);
 }
 
 .button-item-dark {

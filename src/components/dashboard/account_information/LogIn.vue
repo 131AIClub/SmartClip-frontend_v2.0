@@ -97,7 +97,7 @@
   
 <script setup lang="ts">
 import { UseStore } from "@/store";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { fullMap } from "@/assets/lib/utils";
 import { client } from "@/assets/lib/request";
 import { Notification } from "@arco-design/web-vue";
@@ -107,6 +107,12 @@ const store = UseStore()
 const route = useRoute()
 const router = useRouter()
 const registerPage = ref(false)//展示注册页面
+
+//修改主题配色
+onMounted(() => {
+    store.$state.dark = true
+})
+//
 
 const signInForm = ref({//登录表单
     username: '',

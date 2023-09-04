@@ -12,26 +12,21 @@ declare global {
 
   type ClipRequirement = {
     videoType: number
-    // clipStyle: number
-    // clipLength: number
-    // clipNum: number
-    // otherRequirement: string
     maxClipNum: number
-    // templateId: number
   }
 
   type Task = {
     taskId: number
     taskStatus: number
+    taskRemark: string
+    previewUrl: string
+    
     taskCreateTime: number
     clipRequirement: ClipRequirement
     videoId: number
-    // errorStage: number
     errorMessage: string
     taskRemark: string
     videoSourceInfo: VideoSourceInfo
-    videoImageUrl: string
-    
   }
 
   type Clip = {
@@ -110,7 +105,7 @@ declare global {
   type VideoSourceInfo = {
     source: number,
     downloadUrl: string,
-    liveRoomRecordTask: LiveRoomRecordTask,
+    liveRoomInfo: LiveRoomInfo
   }
 
   type LiveRoomRecordTask = {
