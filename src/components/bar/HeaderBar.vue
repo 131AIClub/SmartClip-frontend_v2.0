@@ -49,7 +49,7 @@
 
       <div class="flex justify-end items-center gap-3">
         <a-button @click="router.push('/user-center')" class="button-item-light" type="text">测试用户中心</a-button>
-        <a-button @click="router.push('/dashboard/task-center')" class="button-item-light" type="text">测试任务中心</a-button>
+        <a-button @click="router.push('/task-center')" class="button-item-light" type="text">测试任务中心</a-button>
         <a-button @click="router.push('/task-credit-content')" class="button-item-light" type="text">测试视频编辑页面</a-button>
         <a-button @click="toTaskCenter" size="large" class="button-item-light" type="text">任务中心</a-button>
         <a-button @click="toPayment" size="large" class="button-item-light" type="text">充值</a-button>

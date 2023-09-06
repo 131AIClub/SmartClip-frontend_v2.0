@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import {computed, onMounted, ref} from "vue"
+import { computed, onMounted, ref } from "vue"
 import * as echarts from "echarts"
 import { UseStore } from "@/store";
 
 const store = UseStore()
 
 //TODO 从后端请求获取
-const userBalance=ref(114514)
+const userBalance = ref(114514)
 
 //TODO 从后端获取
-const totalConsumption=ref(1919810)
+const totalConsumption = ref(1919810)
 
 //TODO 从后端请求获取
-const transactions=ref([
+const transactions = ref([
   {
     "point": 6,
     "recordId": 1,
@@ -1346,7 +1346,7 @@ const transactions=ref([
 ])
 
 //当前显示的时间区间中的起始时间
-const currentStartTime=ref(getMonthRangeFromTimestamp(new Date().getTime())["start"])
+const currentStartTime = ref(getMonthRangeFromTimestamp(new Date().getTime())["start"])
 
 function timestampToDate(timestamp) {
   let date = new Date(timestamp);
@@ -1419,59 +1419,59 @@ function getNextMonthRangeFromTimestamp(timestamp) {
 }
 
 //当前图表是否是在画daily
-const currentChartDaily=ref(true)
+const currentChartDaily = ref(true)
 
-const currentYearMonth=computed(()=>{
+const currentYearMonth = computed(() => {
   let date = new Date(currentStartTime.value);
   let year = date.getFullYear();
   let month = date.getMonth() + 1;
   return `${year}年${month}月`;
 })
 
-const redrawChart=(daily:boolean)=>{
+const redrawChart = (daily: boolean) => {
   //根据transactions形成每天的交易额度
-  let timeRange=getMonthRangeFromTimestamp(currentStartTime.value)
+  let timeRange = getMonthRangeFromTimestamp(currentStartTime.value)
 
-  let consumptionRecordMap={}
+  let consumptionRecordMap = {}
   //先全部初始化为0
-  let dayArray=getMonthDays(currentStartTime.value)
-  for(let i=0;i<dayArray.length;i++){
-    let day=dayArray[i]
-    consumptionRecordMap[day]=0
+  let dayArray = getMonthDays(currentStartTime.value)
+  for (let i = 0; i < dayArray.length; i++) {
+    let day = dayArray[i]
+    consumptionRecordMap[day] = 0
   }
 
-  for(let i=0;i<transactions.value.length;i++){
-    let record=transactions.value[i]
-    if(record["point"] >= 0)
+  for (let i = 0; i < transactions.value.length; i++) {
+    let record = transactions.value[i]
+    if (record["point"] >= 0)
       continue
 
     //只保留当月的
-    if(record["transactionTime"] < timeRange.start || record["transactionTime"] > timeRange.end)
+    if (record["transactionTime"] < timeRange.start || record["transactionTime"] > timeRange.end)
       continue
 
-    let formattedDate=timestampToDate(record["transactionTime"])
+    let formattedDate = timestampToDate(record["transactionTime"])
     consumptionRecordMap[formattedDate] += -record["point"]
   }
 
   //根据其实时间戳形成这个月每天的支出累计
-  let cumulativeRecordMap={}
+  let cumulativeRecordMap = {}
 
-  let total=0
-  for(let i=0;i<dayArray.length;i++){
-    let day=dayArray[i]
+  let total = 0
+  for (let i = 0; i < dayArray.length; i++) {
+    let day = dayArray[i]
     total += consumptionRecordMap[day]
     cumulativeRecordMap[day] = total
   }
 
   //形成indexes 和 values
-  let indexes=[]
-  let values=[]
+  let indexes = []
+  let values = []
 
-  let option={}
+  let option = {}
 
-  if(daily){
+  if (daily) {
     //展示每天的
-    for(let date in consumptionRecordMap){
+    for (let date in consumptionRecordMap) {
       indexes.push(date)
       values.push(consumptionRecordMap[date])
     }
@@ -1488,15 +1488,15 @@ const redrawChart=(daily:boolean)=>{
         {
           type: 'bar',
           data: values,
-          itemStyle : {
+          itemStyle: {
             color: "#7eceba"
           }
         }
       ]
     };
-  }else{
+  } else {
     //展示总计的
-    for(let date in cumulativeRecordMap){
+    for (let date in cumulativeRecordMap) {
       indexes.push(date)
       values.push(cumulativeRecordMap[date])
     }
@@ -1513,7 +1513,7 @@ const redrawChart=(daily:boolean)=>{
         {
           type: 'line',
           data: values,
-          itemStyle : {
+          itemStyle: {
             color: "#7eceba"
           },
           areaStyle: {
@@ -1525,42 +1525,42 @@ const redrawChart=(daily:boolean)=>{
     };
   }
 
-  let chart=echarts.getInstanceByDom(document.getElementById("chart-content"))
+  let chart = echarts.getInstanceByDom(document.getElementById("chart-content"))
   chart.setOption(option);
 }
 
-const toNextMonth=()=>{
+const toNextMonth = () => {
   //TODO 这里重新请求一下后端，更新一下transactions，开始结束时间就是下面timeRange的start和end
 
-  let timeRange=getNextMonthRangeFromTimestamp(currentStartTime.value)
-  currentStartTime.value=timeRange["start"]
+  let timeRange = getNextMonthRangeFromTimestamp(currentStartTime.value)
+  currentStartTime.value = timeRange["start"]
   redrawChart(currentChartDaily.value)
 }
 
-const toPrevMonth=()=>{
+const toPrevMonth = () => {
   //TODO 这里重新请求一下后端，更新一下transactions，开始结束时间就是下面timeRange的start和end
 
-  let timeRange=getLastMonthRangeFromTimestamp(currentStartTime.value)
-  currentStartTime.value=timeRange["start"]
+  let timeRange = getLastMonthRangeFromTimestamp(currentStartTime.value)
+  currentStartTime.value = timeRange["start"]
   redrawChart(currentChartDaily.value)
 }
 
-onMounted(()=>{
+onMounted(() => {
   store.$state.dark = false
   //TODO 在这里发送请求获取需要的参数，开始结束时间就是下面timeRange的start和end
-  let timeRange=getMonthRangeFromTimestamp(currentStartTime.value)
+  let timeRange = getMonthRangeFromTimestamp(currentStartTime.value)
 
-  let chart=echarts.init(document.getElementById('chart-content'));
+  let chart = echarts.init(document.getElementById('chart-content'));
 
-  window.addEventListener("resize",function (){
+  window.addEventListener("resize", function () {
     chart.resize()
   })
 
   redrawChart(true)
 })
 
-const transactionTimeTableFormatter=(row, column, cellValue, index)=>{
-  let time=row.transactionTime
+const transactionTimeTableFormatter = (row, column, cellValue, index) => {
+  let time = row.transactionTime
   let date = new Date(time);
   let year = date.getFullYear();
   let month = date.getMonth() + 1;
@@ -1568,115 +1568,172 @@ const transactionTimeTableFormatter=(row, column, cellValue, index)=>{
   return `${year}年${month}月${day}日`;
 }
 
-const pointTableFormatter=(row, column, cellValue, index)=>{
-  let point=row.point
-  if(point < 0)
+const pointTableFormatter = (row, column, cellValue, index) => {
+  let point = row.point
+  if (point < 0)
     return point
   else
-    return '+'+point
+    return '+' + point
 }
 
 </script>
 
 <template>
-  <div class="view-content">
-    <div class="balance-area">
-      <h2 style="font-size: 24px">
-        费用总览
-      </h2>
+  <div class="whole-page">
+    <div class="view-content">
+      <div class="balance-area">
+        <span class="text-title">
+          Account Balance
+        </span>
 
-      <div class="show-balance" style="display: flex;flex-direction: row; margin-bottom: 20px">
-        <div class="show-balance-frame">
-          <div class="show-balance-icon" style="background-color: #1fb98a">
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
+        <div class="show-balance">
+          <div class="show-balance-frame">
+            <a-space>
+              <div class="show-balance-icon" style="background-color: #1fb98a">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" height="1em"
+                  width="1em" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+                  <path fill-rule="evenodd"
+                    d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                    clip-rule="evenodd"></path>
+                </svg>
+              </div>
+
+              <div class="show-balance-text">
+                <div class="card-text">
+                  当前余额
+                </div>
+                <div class="card-number">
+                  ￥{{ userBalance }}
+                </div>
+              </div>
+            </a-space>
+
           </div>
 
-          <div class="show-balance-text">
-            <div>
-              当前余额
-            </div>
-            <div style="font-size: 20px; margin-bottom: 10px; font-weight: bold">
-              ￥{{userBalance}}
-            </div>
-          </div>
-        </div>
+          <div class="show-balance-frame">
+            <a-space>
+              <div class="show-balance-icon" style="background-color: #f2a741">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" height="1em"
+                  width="1em" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z">
+                  </path>
+                  <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
+                    clip-rule="evenodd"></path>
+                </svg>
+              </div>
 
-        <div class="show-balance-frame">
-          <div class="show-balance-icon" style="background-color: #f2a741">
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path></svg>
-          </div>
-
-          <div class="show-balance-text">
-            <div>
-              累计消费
-            </div>
-            <div style="font-size: 20px; margin-bottom: 10px; font-weight: bold">
-              ￥{{totalConsumption}}
-            </div>
+              <div class="show-balance-text">
+                <div class="card-text">
+                  累计消费
+                </div>
+                <div class="card-number">
+                  ￥{{ totalConsumption }}
+                </div>
+              </div>
+            </a-space>
           </div>
         </div>
       </div>
+
+
+      <div class="transaction-area">
+        <span class="text-title">
+          Trading Particulars
+        </span>
+
+        <div class="transaction-chart-description">
+          下图和下表展示了您的交易记录以及统计信息
+        </div>
+
+        <div class="transaction-operate-area" style="position:relative;margin-top: 10px; margin-bottom: 30px">
+          <div class="month-select" style="display: inline-block">
+            <svg @click="toPrevMonth" style="vertical-align: center;cursor: pointer;display: inline-block"
+              stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+              stroke-linejoin="round" class="chevron" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+
+            <div class="month"
+              style="font-weight: 700;margin-left: 25px;margin-right: 25px;font-size: 20px;text-align: center;vertical-align: center; display: inline-block">
+              {{ currentYearMonth }}
+            </div>
+
+            <svg @click="toNextMonth" style="vertical-align: center;cursor: pointer;display: inline-block"
+              stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+              stroke-linejoin="round" class="chevron" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+
+          <div class="data-select" style="display: inline-block; right: 0; position: absolute; height: 32px;">
+            <label :class="{ 'data-select-selected': currentChartDaily, 'data-select-unselected': !currentChartDaily }"
+              @click="currentChartDaily = true; redrawChart(true)">每日消费</label>
+            <label :class="{ 'data-select-selected': !currentChartDaily, 'data-select-unselected': currentChartDaily }"
+              @click="currentChartDaily = false; redrawChart(false)">当月总计</label>
+          </div>
+        </div>
+
+        <div class="show-diagram" style="width: 100%">
+          <div id="chart-content" style="width: 100%; height: 300px">
+
+          </div>
+        </div>
+
+        <div class="show-table">
+
+          <el-collapse>
+            <el-collapse-item style="--el-collapse-header-font-size: 15px">
+              <template #title>
+                <el-icon>
+                  <icon-list />
+                </el-icon>
+                &nbsp;展示交易记录
+              </template>
+              <el-table :data="transactions" style="width: 100%">
+                <el-table-column :formatter="transactionTimeTableFormatter" label="时间" />
+                <el-table-column :formatter="pointTableFormatter" label="金额" />
+                <el-table-column prop="typeString" label="备注" />
+              </el-table>
+            </el-collapse-item>
+
+          </el-collapse>
+
+
+        </div>
+
+      </div>
+
     </div>
-
-    <hr />
-
-    <div class="transaction-area">
-      <h2 style="font-size: 24px">
-        交易详情
-      </h2>
-
-      <div class="transaction-chart-description">
-        下图和下表展示了您的交易记录以及统计信息
-      </div>
-
-      <div class="transaction-operate-area" style="position:relative;margin-top: 10px; margin-bottom: 30px">
-        <div class="month-select" style="display: inline-block">
-          <svg @click="toPrevMonth" style="vertical-align: center;cursor: pointer;display: inline-block" stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="chevron" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><polyline points="15 18 9 12 15 6"></polyline></svg>
-          <div class="month" style="font-weight: 700;margin-left: 25px;margin-right: 25px;font-size: 20px;text-align: center;vertical-align: center; display: inline-block">
-            {{currentYearMonth}}
-          </div>
-          <svg @click="toNextMonth" style="vertical-align: center;cursor: pointer;display: inline-block" stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="chevron" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-
-        <div class="data-select" style="display: inline-block; right: 0; position: absolute; height: 32px;">
-          <label :class="{'data-select-selected':currentChartDaily,'data-select-unselected':!currentChartDaily}"
-                 @click="currentChartDaily=true;redrawChart(true)">每日消费</label>
-          <label :class="{'data-select-selected':!currentChartDaily,'data-select-unselected':currentChartDaily}"
-                 @click="currentChartDaily=false;redrawChart(false)">当月总计</label>
-        </div>
-      </div>
-
-      <div class="show-diagram" style="width: 100%">
-        <div id="chart-content" style="width: 100%; height: 300px">
-
-        </div>
-      </div>
-
-      <div class="show-table">
-
-        <el-collapse>
-          <el-collapse-item title="展示交易记录" style="--el-collapse-header-font-size: 15px">
-            <el-table :data="transactions" style="width: 100%">
-              <el-table-column :formatter="transactionTimeTableFormatter" label="时间" />
-              <el-table-column :formatter="pointTableFormatter" label="金额"/>
-              <el-table-column prop="typeString" label="备注" />
-            </el-table>
-          </el-collapse-item>
-
-        </el-collapse>
-
-
-      </div>
-
-    </div>
-
   </div>
-
 </template>
 
 <style scoped>
+.whole-page {
+  background-color: rgb(241, 245, 249);
+  min-height: 100vh;
+}
 
-.show-balance-frame{
+.text-title {
+  color: black;
+  font-weight: bold;
+  font-size: xx-large;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.card-text {
+  font-family: 黑体;
+  font-size: medium;
+}
+
+.card-number {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.show-balance-frame {
   padding: 15px 30px;
   border: 1px solid lightgray;
   border-radius: 4px;
@@ -1688,21 +1745,23 @@ const pointTableFormatter=(row, column, cellValue, index)=>{
   flex-direction: row;
 }
 
-.show-balance-text{
-  margin-left: 30px;
+.show-balance-frame:hover {
+  background-color: #e2e8f0;
+}
+
+.show-balance-text {
+  margin-left: 25px;
   position: relative;
 }
 
-.show-balance-icon{
+.show-balance-icon {
   border-radius: 4px;
   width: 54px;
   height: 54px;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
+
 }
 
-.show-balance-icon svg{
+.show-balance-icon svg {
   position: relative;
   top: 50%;
   left: 50%;
@@ -1712,13 +1771,14 @@ const pointTableFormatter=(row, column, cellValue, index)=>{
   height: 24px;
 }
 
-.transaction-chart-description{
+.transaction-chart-description {
   margin-top: 24px;
   margin-bottom: 24px;
-  font-size: 16px;
+  font-size: 18px;
+  font-family: 黑体;
 }
 
-.data-select-unselected{
+.data-select-unselected {
   background-color: #ececf1;
   text-align: center;
   border-radius: 1px;
@@ -1729,7 +1789,7 @@ const pointTableFormatter=(row, column, cellValue, index)=>{
   padding: 8px;
 }
 
-.data-select-selected{
+.data-select-selected {
   background-color: #ececf1;
   text-align: center;
   border-radius: 1px;
@@ -1740,16 +1800,17 @@ const pointTableFormatter=(row, column, cellValue, index)=>{
   padding: 8px;
 }
 
-.view-content{
+.view-content {
   padding-top: 10px;
   margin-left: 20%;
   margin-right: 20%;
   color: #353740;
 }
 
-.show-balance{
-  margin-top: 50px;
+.show-balance {
+  display: flex;
+  flex-direction: row;
+  margin-top: 3%;
+  margin-bottom: 3%
 }
-
-
 </style>

@@ -9,15 +9,15 @@
                 <el-tag round effect="dark" class="tag-item" color="#ed1941">任务出错</el-tag>
             </div>
 
-            <div v-if="taskStatus === 0" class="absolute z-10 top-3 left-3">
+            <div v-if="taskStatus === 0 || taskStatus === 1 || taskStatus === 2" class="absolute z-10 top-3 left-3">
                 <el-tag round effect="dark" class="tag-item" color="#8a8c8e">未就绪</el-tag>
             </div>
 
-            <div v-if="taskStatus === 1 || taskStatus === 3 || taskStatus === 4" class="absolute z-10 top-3 left-3">
-                <el-tag round effect="dark" class="tag-item" color="#009ad6">未剪辑</el-tag>
+            <div v-if="taskStatus === 3 || taskStatus === 4" class="absolute z-10 top-3 left-3">
+                <el-tag round effect="dark" class="tag-item" color="#009ad6">待编辑</el-tag>
             </div>
 
-            <div v-if="taskStatus === 2 || taskStatus === 5" class="absolute z-10 top-3 left-3">
+            <div v-if="taskStatus === 5" class="absolute z-10 top-3 left-3">
                 <el-tag round effect="dark" class="tag-item" color="#e0861a">剪辑中</el-tag>
             </div>
 
@@ -26,14 +26,14 @@
             </div>
 
             <!-- 
-        -1 任务出错
-        0 视频还未就绪（对应图中状态“下载中”和“录制中”）
-        1 未剪辑（但还没·剪辑过）
-        2 剪辑中
-        3 内容编辑
-        4 模板编辑
-        5 应用模板中
-        6 制作完成 
+        -1 任务出错（任务出错） #ed1941
+        0 视频还未就绪（对应图中状态“下载中”和“录制中”）（未就绪） #8a8c8e
+        1 未剪辑（但还没·剪辑过）（未就绪） #8a8c8e
+        2 剪辑中(未就绪) #8a8c8e
+        3 内容编辑（待编辑）#009ad6
+        4 模板编辑（待编辑）#009ad6
+        5 应用模板中（剪辑中） #e0861a
+        6 制作完成 （已完成） #1d953f
         -->
 
             <div class="w-9 h-9 bg-slate-100 rounded-lg absolute z-10 top-3 right-5 

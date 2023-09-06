@@ -58,17 +58,6 @@ const judgeUrl = (url: string) => {
 const buttonLoading = ref(false)
 
 const submitClick = async () => {
-
-  //设置创建任务加载状态
-  buttonLoading.value = true
-
-  ElMessage({
-      type: "success",
-      message: "任务创建中，请稍候...",
-      center: true,
-      duration: 2000
-    })
-
   let result = {
     inputData: props.inputData,
     videoType: selectedVideoType.value,
@@ -80,6 +69,57 @@ const submitClick = async () => {
   let inputData = result["inputData"]
   let source = inputData["source"]
   result["source"] = source
+
+  const currentTime = Date.now()
+
+  //判断结束时间要大于当前时间
+  if (result.endTime <= currentTime) {
+    ElMessage({
+      type: "error",
+      message: "结束时间必须晚于当前时间！",
+      center: true,
+      duration: 1000
+    })
+    return
+  }
+
+  //判断结束时间要大于开始时间
+  if (result.endTime <= result.startTime) {
+    ElMessage({
+      type: "error",
+      message: "结束时间必须晚于开始时间！",
+      center: true,
+      duration: 1000
+    })
+    return
+  }
+
+  //判断结束时间减开始时间要小于12小时
+  const timeDifference = result.endTime - result.startTime
+  const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+  if (hoursDifference > 12) {
+    ElMessage({
+      type: "error",
+      message: "录制时间段请小于12小时！",
+      center: true,
+      duration: 1000
+    })
+    return
+  }
+
+
+  //设置创建任务加载状态
+  buttonLoading.value = true
+
+  ElMessage({
+    type: "success",
+    message: "任务创建中，请稍候...",
+    center: true,
+    duration: 2000
+  })
+
+
 
   if (source == 2) {
     //Has file
@@ -178,8 +218,16 @@ const submitClick = async () => {
       </h5>
 
       <div style="margin: 20px">
-        <el-date-picker v-model="selectedDateTime" type="datetimerange" range-separator="到" start-placeholder="录制开始时间"
-          end-placeholder="录制结束时间" />
+        <a-space direction="vertical">
+          <el-date-picker v-model="selectedDateTime" type="datetimerange" range-separator="到" start-placeholder="录制开始时间"
+            end-placeholder="录制结束时间" />
+          <a-space>
+            <icon-info-circle />
+            <span>时间段请控制在12小时以内~</span>
+          </a-space>
+
+        </a-space>
+
       </div>
     </div>
 
@@ -209,7 +257,7 @@ const submitClick = async () => {
     </div>
 
     <div class="confirm-button-div">
-      <el-button @click="submitClick" class="input-button" :loading="buttonLoading"> 
+      <el-button @click="submitClick" class="input-button" :loading="buttonLoading">
         <div class="input-button-text">
           创建任务
         </div>
