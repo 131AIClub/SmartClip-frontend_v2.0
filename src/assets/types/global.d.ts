@@ -105,13 +105,24 @@ declare global {
   type VideoSourceInfo = {
     source: number,
     downloadUrl: string,
-    liveRoomInfo: LiveRoomInfo
+    liveRoomRecordTask: LiveRoomRecordTask
   }
 
   type LiveRoomRecordTask = {
-    platform: number,
+    liveRoomPlatform: number,
     liveRoomId: string,
-    recordStartTime: string,
-    recordEndTime: string
+    recordStartTime: number,
+    recordEndTime: number
+  }
+
+  //这个类是用来响应创建任务的，接口文档中并没有，详情见https://github.com/QZero233/SmartClipFrontendComponents/blob/main/NewTask.md
+  type Result = {
+    source: number,
+    url: string,
+    video: File,
+    videoType: number,
+    startTime: number,
+    endTime: number,
+    maxClipNum: number
   }
 }

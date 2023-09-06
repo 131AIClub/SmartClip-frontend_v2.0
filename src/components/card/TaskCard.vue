@@ -5,13 +5,25 @@
         <!-- 图片相关 -->
         <div class="cursor-pointer group">
             <!-- 状态信息 -->
-            <div v-if="taskStatus === -1" class="w-7 h-7 bg-red-600 rounded-full absolute z-10 top-3 left-3"></div>
-            <div v-if="taskStatus === 0" class="w-7 h-7 bg-gray-300 rounded-full absolute z-10 top-3 left-3"></div>
-            <div v-if="taskStatus === 1 || taskStatus === 3 || taskStatus === 4"
-                class="w-7 h-7 bg-blue-400 rounded-full absolute z-10 top-3 left-3"></div>
-            <div v-if="taskStatus === 2 || taskStatus === 5"
-                class="w-7 h-7 bg-yellow-400 rounded-full absolute z-10 top-3 left-3"></div>
-            <div v-if="taskStatus === 6" class="w-7 h-7 bg-green-500 rounded-full absolute z-10 top-3 left-3"></div>
+            <div v-if="taskStatus === -1" class="absolute z-10 top-3 left-3">
+                <el-tag round effect="dark" class="tag-item" color="#ed1941">任务出错</el-tag>
+            </div>
+
+            <div v-if="taskStatus === 0" class="absolute z-10 top-3 left-3">
+                <el-tag round effect="dark" class="tag-item" color="#8a8c8e">未就绪</el-tag>
+            </div>
+
+            <div v-if="taskStatus === 1 || taskStatus === 3 || taskStatus === 4" class="absolute z-10 top-3 left-3">
+                <el-tag round effect="dark" class="tag-item" color="#009ad6">未剪辑</el-tag>
+            </div>
+
+            <div v-if="taskStatus === 2 || taskStatus === 5" class="absolute z-10 top-3 left-3">
+                <el-tag round effect="dark" class="tag-item" color="#e0861a">剪辑中</el-tag>
+            </div>
+
+            <div v-if="taskStatus === 6" class="absolute z-10 top-3 left-3">
+                <el-tag round effect="dark" class="tag-item" color="#1d953f">已完成</el-tag>
+            </div>
 
             <!-- 
         -1 任务出错
@@ -24,7 +36,7 @@
         6 制作完成 
         -->
 
-            <div class="w-9 h-9 bg-slate-100 rounded-lg absolute z-10 top-3 right-3 
+            <div class="w-9 h-9 bg-slate-100 rounded-lg absolute z-10 top-3 right-5 
         opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:bg-slate-200
          flex items-center justify-center" @click="toDetail">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -79,7 +91,7 @@
                         <div class="collapse-inner-item">
                             <div class="h-[1vh]"></div>
                             <div>
-                                <el-descriptions :column="3">
+                                <el-descriptions :column="2" border>
                                     <el-descriptions-item label="任务编号">
                                         {{ taskDetail.taskId }}
                                     </el-descriptions-item>
@@ -89,7 +101,7 @@
                                     </el-descriptions-item>
 
                                     <el-descriptions-item label="任务状态">
-                                        <el-tag size="medium">{{ computed_status }}</el-tag>
+                                        <el-tag size="medium" round>{{ computed_status }}</el-tag>
                                     </el-descriptions-item>
 
                                     <el-descriptions-item label="创建时间">
@@ -184,7 +196,7 @@ const toCredit = () => {
 const detailModal = ref(false)
 const taskDetail = ref<Task>()//储存当前任务的所有信息
 const toDetail = async () => {
-    const res = await client.get<{ task: Task }>({ url: `task/${props.task_id}` })
+    const res = await client.get<{ task: Task }>({ url: `task/${props.task_id}/` })
     if (res.code !== 114) {
         Notification.error({
             content: res.msg,
@@ -193,6 +205,8 @@ const toDetail = async () => {
         })
     }
     taskDetail.value = res.data.task
+
+    console.log(taskDetail.value)
 
     detailModal.value = true
 }
@@ -230,7 +244,7 @@ const computed_status = computed(() => {//任务状态
 const computed_type = computed(() => {//任务场景
     switch (taskDetail.value.clipRequirement.videoType) {
         case 0:
-            return "综合"
+            return "综合场景"
         case 1:
             return "直播带货"
         case 2:
@@ -241,16 +255,20 @@ const computed_type = computed(() => {//任务场景
 })
 
 const computed_source = computed(() => {//任务来源
-    switch (taskDetail.value.videoSourceInfo.liveRoomInfo.platform) {
-        case 0:
-            return "bilibili"
-        case 1:
-            return "抖音"
-        case 2:
-            return "快手"
-        default:
-            return "error，请联系管理员"
+    if (taskDetail.value.videoSourceInfo.source === 2) {//url上传才有任务来源
+        switch (taskDetail.value.videoSourceInfo.liveRoomRecordTask.liveRoomPlatform) {
+            case 0:
+                return "bilibili"
+            case 1:
+                return "抖音"
+            case 2:
+                return "快手"
+            default:
+                return "error，请联系管理员"
+        }
     }
+
+    return "仅当任务创建于直播录制时才显示"
 })
 
 //获取一个任务的所有信息
@@ -262,12 +280,13 @@ const changeRemark = async () => {
     if (newRemark.value !== "") {
         const res = await client.post<{ task_id: number }>({
             url: `task/${props.task_id}/remark/`,
-            data: { remark: newRemark }
+            data: { remark: newRemark.value }
         })
         if (res.code === 114) {
             Notification.success({
                 content: "修改成功。"
             })
+            location.reload()
         } else {
             Notification.error({
                 content: res.msg,
@@ -297,6 +316,15 @@ const changeRemark = async () => {
     word-wrap: break-word;
     word-break: break-all;
     overflow: hidden;
+}
+
+.tag-item {
+    // font-family: 黑体;
+    // width: auto;
+    color: rgb(241,245,249);
+    font-weight: bold;
+    height: 3vh;
+    width: 7vh;
 }
 
 .button-item {

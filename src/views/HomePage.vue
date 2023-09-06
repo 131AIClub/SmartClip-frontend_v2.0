@@ -1,5 +1,5 @@
 <template >
-  <div class="flex justify-center items-center h-screen bg-black ">
+  <div class="flex justify-center items-center h-screen" id="homepage">
 
 
     <!-- 背景视频 -->
@@ -121,6 +121,10 @@ import { ref, onUnmounted, onMounted } from 'vue'
 const router = useRouter()
 const store = UseStore()
 
+onMounted(() => {
+  store.$state.dark = true
+})
+
 // document.body.setAttribute('arco-theme', 'dark')
 
 //主页图片
@@ -183,6 +187,10 @@ const getStarted = () => {
 
 .input-with-select .el-input-group__prepend {
   background-color: var(--el-fill-color-blank);
+}
+
+#homepage {
+  background-color: #020617;
 }
 
 </style>

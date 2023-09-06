@@ -154,7 +154,7 @@
                 <!-- 视频预览 -->
                 <div class="flex justify-center items-center">
                     <video ref="videoItem" class="rounded-2xl overflow-hidden" style="object-fit: cover; width: 300px;">
-                        <source src="/videoTemplate.mp4" type="video/mp4" @ended="test">
+                        <source src="/videoTemplate.mp4" type="video/mp4" >
                         该浏览器不支持播放视频
                     </video>
                 </div>
@@ -227,15 +227,13 @@ onMounted(() => {
 })
 //
 
-const test = () => {console.log("???")}
-
 const creditContent = ref("1")
 const isVideoPlay = ref(false)
 const videoItem = ref()//对video标签的引用
 
 //返回任务中心
 const toTaskCenter = () => {
-    router.push("/dashboard/task-center")
+    router.push("/task-center")
 }
 
 //右侧视频按钮相关函数
