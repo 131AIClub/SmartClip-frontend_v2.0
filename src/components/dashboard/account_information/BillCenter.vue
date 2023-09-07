@@ -1801,7 +1801,7 @@ const pointTableFormatter = (row, column, cellValue, index) => {
 }
 
 .view-content {
-  padding-top: 10px;
+  /* padding-top: 10px; */
   margin-left: 20%;
   margin-right: 20%;
   color: #353740;
@@ -1823,7 +1823,7 @@ const pointTableFormatter = (row, column, cellValue, index) => {
 .table-item {
   --el-table-tr-bg-color:rgb(241, 245, 249);
   --el-table-header-bg-color:rgb(241, 245, 249);
-  --el-table-bg-color:rgb(241,245,249)
+  --el-table-bg-color:rgb(241, 245, 249)
   
 }
 </style>

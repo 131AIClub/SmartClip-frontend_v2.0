@@ -234,6 +234,10 @@ const setTimeCursorTime=(newTime : number)=>{
   moveScrollerToTimeCursor()
 }
 
+const drawIt=()=>{
+  changeScale(scale.value)
+}
+
 //计算格式化后的总时间
 const formattedTotalTime=computed(()=> convertTimestamp(totalTime.value))
 const formattedCurrentCursorTime=computed(()=> convertTimestamp(timeCursorDraggable.getActualTime()))
@@ -264,7 +268,8 @@ function convertTimestamp(timestamp) {
 }
 
 defineExpose({
-  setTimeCursorTime
+  setTimeCursorTime,
+  drawIt
 })
 
 </script>

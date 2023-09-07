@@ -1,4 +1,4 @@
-import {Notification} from "@arco-design/web-vue";
+import { Notification } from "@arco-design/web-vue";
 
 export const fullMap = (o: Record<string, string>) => {
   return !Object.values(o).filter(x => !x).length
@@ -97,4 +97,21 @@ export const datetime = (value: number) => {
   if (nowDate.minutes() > valueDate.minutes()) return `${nowDate.minutes() - valueDate.minutes()}分钟前`
   if (nowDate.seconds() > valueDate.seconds()) return `${nowDate.seconds() - valueDate.seconds()}秒前`
   return "刚刚"
+}
+
+export const millisecondsToTimeString = (milliseconds: number) => {
+  // 计算小时、分钟和秒
+  const hours = Math.floor(milliseconds / 3600000); // 1小时 = 3600000毫秒
+  const minutes = Math.floor((milliseconds % 3600000) / 60000); // 1分钟 = 60000毫秒
+  const seconds = Math.floor((milliseconds % 60000) / 1000); // 1秒 = 1000毫秒
+
+  // 格式化成两位数
+  const formattedHours = hours.toString().padStart(2, '0');
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  const formattedSeconds = seconds.toString().padStart(2, '0');
+
+  // 构建时间字符串
+  const timeString = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+
+  return timeString;
 }

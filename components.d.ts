@@ -10,6 +10,7 @@ declare module 'vue' {
     AccountManagement: typeof import('./src/components/dashboard/account_information/AccountManagement.vue')['default']
     AllTask: typeof import('./src/components/dashboard/all_task/AllTask.vue')['default']
     AllTaskLive: typeof import('./src/components/dashboard/all_task/AllTaskLive.vue')['default']
+    ASpan: typeof import('@arco-design/web-vue')['Span']
     Banner: typeof import('./src/components/homepage_models/Banner.vue')['default']
     BillCenter: typeof import('./src/components/dashboard/account_information/BillCenter.vue')['default']
     BlogHome: typeof import('./src/components/homepage_models/BlogHome.vue')['default']
