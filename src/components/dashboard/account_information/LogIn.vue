@@ -102,6 +102,7 @@ import { fullMap } from "@/assets/lib/utils";
 import { client } from "@/assets/lib/request";
 import { Notification } from "@arco-design/web-vue";
 import { useRoute, useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 
 const store = UseStore()
 const route = useRoute()
@@ -146,6 +147,13 @@ const toSignIn = async () => {
         // const next = route.query.next && (typeof route.query.next === "string" ? route.query.next : route.query.next[0])
         // if (next) await router.push(next)
 
+        ElMessage({
+            type: "success",
+            message: "登录成功！",
+            center: true,
+            duration: 1000
+        })
+
         router.push("/")
     } else {
         Notification.error({
@@ -179,6 +187,13 @@ const toSignUp = async () => {
         // store.show_sign_page = false
         // const next = route.query.next && (typeof route.query.next === "string" ? route.query.next : route.query.next[0])
         // if (next) await router.push(next)
+
+        ElMessage({
+            type: "success",
+            message: "注册成功！",
+            center: true,
+            duration: 1000
+        })
 
         router.push("/")
     } else {

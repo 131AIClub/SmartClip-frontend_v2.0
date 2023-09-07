@@ -32,11 +32,10 @@ declare global {
   type Clip = {
     clipId: number
     clipVideoId: number
-    distributed: boolean
-    clipLength: number
     clipTitle: string
     clipDesc: string
-    clipText: string
+    startTime: number
+    endTime: number
   }
 
   type Progress = {
@@ -115,14 +114,13 @@ declare global {
     recordEndTime: number
   }
 
-  //这个类是用来响应创建任务的，接口文档中并没有，详情见https://github.com/QZero233/SmartClipFrontendComponents/blob/main/NewTask.md
-  type Result = {
-    source: number,
-    url: string,
-    video: File,
-    videoType: number,
-    startTime: number,
-    endTime: number,
-    maxClipNum: number
+  type Sentence = {
+    text: string
+    startTime: number
+    endTime: number
+  }
+
+  type Transcription = {
+    sentences: Sentence[]
   }
 }

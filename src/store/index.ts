@@ -6,11 +6,9 @@ type StoreType = {
   dark: boolean
   initialized: boolean
   is_mobile: boolean
-  show_sign_page: boolean
   is_login: boolean
   user: User | null
   loading: boolean
-  order_id: string
   video_URL: string
 }
 export const UseStore = defineStore("main", {
@@ -18,12 +16,10 @@ export const UseStore = defineStore("main", {
     dark: true,//默认主题为黑色
     initialized: false,
     is_mobile: window.innerWidth < 768,
-    show_sign_page: false,//要修改
     is_login: false,
     user: null,
     loading: false,
-    order_id: "",
-    video_URL: ""
+    video_URL: "" //首页用到了，也要改！！
   }),
   getters: {},
   actions: {
@@ -37,7 +33,7 @@ export const UseStore = defineStore("main", {
     },
     async initUser() {
       const res = await client.get<{ user: User }>({url: "user/"})
-      if (res.code === 9000) {
+      if (res.code === 114) {
         this.is_login = true
         this.user = res.data.user
       }

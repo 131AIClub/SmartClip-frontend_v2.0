@@ -174,7 +174,7 @@ import { client } from "@/assets/lib/request";
 import router from "@/router";
 import { ref, computed } from "vue";
 import { Notification } from "@arco-design/web-vue";
-import { ElDescriptions } from "element-plus";
+import { ElDescriptions, ElMessage } from "element-plus";
 import { DateParser } from "@/assets/lib/utils";
 
 const props = defineProps<{ taskRemark: string, taskStatus: number, task_id: number, previewUrl: string }>()
@@ -183,12 +183,21 @@ const props = defineProps<{ taskRemark: string, taskStatus: number, task_id: num
 
 //点击视频进入编辑页面
 const toCredit = () => {
-    router.push({
-        path: '/task-credit-content',
-        query: {
-            task_id: props.task_id
-        }
-    })
+    if (props.taskStatus === 3 || props.taskStatus === 4) {
+        router.push({
+            path: '/task-credit-content',
+            query: {
+                task_id: props.task_id
+            }
+        })
+    } else {
+        ElMessage({
+            type: "error",
+            message: "该任务当前无法编辑！",
+            center: true,
+            duration: 1000
+        })
+    }
 }
 //
 
@@ -321,7 +330,7 @@ const changeRemark = async () => {
 .tag-item {
     // font-family: 黑体;
     // width: auto;
-    color: rgb(241,245,249);
+    color: rgb(241, 245, 249);
     font-weight: bold;
     height: 3vh;
     width: 7vh;

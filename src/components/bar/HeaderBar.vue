@@ -89,39 +89,22 @@ const toHomePage = () => {
 
 //前往任务中心
 const toTaskCenter = () => {
-  if (!store.$state.is_login) {
-    ElMessage({
-      type: "error",
-      message: "请先登录！",
-      center: true
-    })
-    return
-  }
-
   router.push('/task-center')
 }
 
 //点击充值按钮触发事件
 const toPayment = () => {
-  if (!store.$state.is_login) {
-    ElMessage({
-      type: "error",
-      message: "请先登录！",
-      center: true
-    })
-    return
-  }
-
   router.push('/dashboard/payment')
 }
 
 //退出登录
 const logOut = () => {
   store.is_login = false
+  localStorage.removeItem("token")
   router.push("/")
   ElMessage({
     type: "success",
-    message: "退出成功",
+    message: "退出成功！",
     center: true
   })
 }

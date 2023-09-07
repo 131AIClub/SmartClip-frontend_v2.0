@@ -1,6 +1,7 @@
 //路由路径命名规范：path:word-word(小写)
-import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router"
-import {UseStore} from "@/store";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router"
+import { UseStore } from "@/store";
+import { ElMessage } from "element-plus";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,42 +13,46 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     //登录窗口的router
-    path:"/log-in",
-    component:() => import("@/components/dashboard/account_information/LogIn.vue"),
-    meta:{
+    path: "/log-in",
+    component: () => import("@/components/dashboard/account_information/LogIn.vue"),
+    meta: {
       depth: 0
     }
   },
   {
     //任务中心界面
-    path:"/task-center",
-    component:() => import("@/components/dashboard/task_center/TaskCenter.vue"),
-    meta:{
-      depth: 0
+    path: "/task-center",
+    component: () => import("@/components/dashboard/task_center/TaskCenter.vue"),
+    meta: {
+      depth: 0,
+      auth: true,
     }
   },
   {
     //任务编辑的内容界面
-    path:"/task-credit-content",
-    component:() => import("@/views/ContentCredit.vue"),
+    path: "/task-credit-content",
+    component: () => import("@/views/ContentCredit.vue"),
     meta: {
-      depth: 0
+      depth: 0,
+      auth: true
     }
   },
   {
     //任务编辑的样式界面
-    path:"/task-credit-template",
-    component:() => import("@/views/TemplateCredit.vue"),
+    path: "/task-credit-template",
+    component: () => import("@/views/TemplateCredit.vue"),
     meta: {
-      depth: 0
+      depth: 0,
+      auth: true
     }
   },
   {
     //用户中心界面
     path: "/user-center",
-    component:() => import("@/components/dashboard/account_information/BillCenter.vue"),
-    meta:{
-      depth: 0
+    component: () => import("@/components/dashboard/account_information/BillCenter.vue"),
+    meta: {
+      depth: 0,
+      auth: true
     }
   },
   {
@@ -198,31 +203,37 @@ const router = createRouter({
 })
 
 //没有登录就进行重定向
-// router.beforeEach((to, from, next) => {
-//   const store = UseStore()
-//   if (!store.initialized) {
-//     const inter = setInterval(() => {
-//       if (store.initialized) {
-//         if (to.meta.auth && !store.is_login) {
-//           next(`/?next=${to.path}`)
-//           // router.push('/log-in')
-//           // store.show_sign_page = true
-//         } else {
-//           next()
-//         }
-//         clearInterval(inter)
-//       }
-//     }, 50)
-//   } else {
-//     if (to.meta.auth && !store.is_login) {
-//       next(`/?next=${to.path}`)
-//       // router.push('/log-in')
-//       // store.show_sign_page = true
-//       return
-//     }
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  const store = UseStore()
+  if (!store.initialized) {
+    const inter = setInterval(() => {
+      if (store.initialized) {
+        if (to.meta.auth && !store.is_login) {
+          ElMessage({
+            type: "error",
+            message: "请先登录！",
+            center: true
+          })
+          next('/')
+        } else {
+          next()
+        }
+        clearInterval(inter)
+      }
+    }, 50)
+  } else {
+    if (to.meta.auth && !store.is_login) {
+      ElMessage({
+        type: "error",
+        message: "请先登录！",
+        center: true
+      })
+      next('/')
+      return
+    }
+    next()
+  }
+})
 
 export const safeBack = function (path: string) {
   return !window.history.state.back && path ? router.replace(path || "/") : router.back()

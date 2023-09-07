@@ -214,22 +214,74 @@ import { UseStore } from "@/store";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import TimeLine from "@/components/tool/TimeLine.vue";
+import { client } from "@/assets/lib/request";
+import { Notification } from "@arco-design/web-vue";
 
 const store = UseStore()
 const router = useRouter()
 const route = useRoute()
 
-//  document.body.setAttribute('arco-theme', 'dark')
-
 //修改主题配色
 onMounted(() => {
   store.$state.dark = true
+  load()
 })
 //
 
 const creditContent = ref("1")
 const isVideoPlay = ref(false)
 const videoItem = ref()//对video标签的引用
+
+//获取当前任务的信息
+const clips = ref<Clip[]>([])
+const transcription = ref<Transcription>()
+
+const load = async () => {
+    //获取一个任务对应所有切片
+    let resClip = await client.get<{ clips: Clip[] }>(
+        { url: `task/${route.query?.task_id}/clip/` }
+    )
+    if (resClip.code === 114) {
+        clips.value = resClip.data.clips
+    } else {
+        Notification.error({
+            title: '获取任务信息失败',
+            content: resClip.msg,
+            closable: true,
+            duration: 1000000,
+        })
+        return 
+    }
+    // 获取一个任务的文字稿
+    const resText = await client.get<{transcription: Transcription}>(
+        {url: `task/${route.query?.task_id}/transcription/`}
+    )
+    if(resText.code === 114) {
+        transcription.value = resText.data.transcription
+    } else {
+        Notification.error({
+            title: '获取任务信息失败',
+            content: resText.msg,
+            closable: true,
+            duration: 1000000,
+        })
+        return 
+    }
+
+    //渲染切片到时间轴
+    for(var i = 0;i <clips.value.length; ++i) {
+        const tempArray = {startTime: clips.value[i].startTime,endTime: clips.value[i].endTime}
+        // clip.value[i].startTime = clips.value[i].startTime
+        // clip.value[i].endTime = clips.value[i].endTime
+        clip.value.push(tempArray)
+    }
+    //渲染视频文本
+    console.log(clip.value)
+    console.log(transcription.value)
+    //渲染标题文案
+    
+}
+//获取当前任务的信息
 
 //返回任务中心
 const toTaskCenter = () => {
@@ -279,19 +331,10 @@ const toNext = () => {
 
 
 //时间轴相关变量和方法
-const clip=ref([
-  {
-    "startTime":5*1000,
-    "endTime":20*1000
-  },
-  {
-    "startTime":30*1000,
-    "endTime":50*1000
-  }
-])
+const clip=ref<{startTime:number,endTime:number}[]>([])
 
 const timeChange=(newTime : number)=>{
-  console.log(newTime)
+    videoItem.value.currentTime = newTime/1000
 }
 
 const clipDurationChange=(evt)=>{

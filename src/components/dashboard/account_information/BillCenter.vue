@@ -1685,14 +1685,14 @@ const pointTableFormatter = (row, column, cellValue, index) => {
         <div class="show-table">
 
           <el-collapse>
-            <el-collapse-item style="--el-collapse-header-font-size: 15px">
+            <el-collapse-item class="collapse-item">
               <template #title>
                 <el-icon>
                   <icon-list />
                 </el-icon>
                 &nbsp;展示交易记录
               </template>
-              <el-table :data="transactions" style="width: 100%">
+              <el-table :data="transactions" style="width: 100%" class="table-item">
                 <el-table-column :formatter="transactionTimeTableFormatter" label="时间" />
                 <el-table-column :formatter="pointTableFormatter" label="金额" />
                 <el-table-column prop="typeString" label="备注" />
@@ -1812,5 +1812,18 @@ const pointTableFormatter = (row, column, cellValue, index) => {
   flex-direction: row;
   margin-top: 3%;
   margin-bottom: 3%
+}
+
+.collapse-item {
+  --el-collapse-header-font-size: 15px;
+  --el-collapse-header-bg-color:rgb(241, 245, 249);
+  --el-collapse-content-bg-color:rgb(241, 245, 249);
+}
+
+.table-item {
+  --el-table-tr-bg-color:rgb(241, 245, 249);
+  --el-table-header-bg-color:rgb(241, 245, 249);
+  --el-table-bg-color:rgb(241,245,249)
+  
 }
 </style>
